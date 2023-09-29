@@ -1,0 +1,573 @@
+Javascript : 
+
+remember that in execution context, we have three things :
+Variable environment
+Scope Chain
+This keyword
+
+ch : 94 :  Hoisting
+make some types of variable accessible/usable in the code before they are actually declared. 
+BTS : at the back before the execution, code is scanned for variable declaration, and for each variable, a new property is created in the variable environment object.
+This is how hoisting works
+
+function declaration :  Yes, It can be hoisted. 
+                                    Initial value willl be the actual function 
+                                    scope : block
+
+var variables :  Yes, It can be hoisted. 
+                                    Initial value willl be the undefined
+                                    scope : function
+
+let and const :  nope, It can be hoisted technically but not in practice. 
+                                    Initial value willl be the <uninitialized> / TDZ (Temporal Dead Zone)
+                                    scope : block
+
+function expression & arrows : depends if we are using var, or const / let
+
+
+Temporal Dead Zone : if(myName === 'Jonas'){
+console.log(`Jatin is a ${job}`);              ----------------> used before declared // referecne error cannot access 'job' before initialization bc job is declared using const ----> TDZ
+const age = 2027-1979;                       --------------------------------------------------------------------> TDZ
+const job = 'teacher';                            -----------------------> here it's called so all above will be TDZ
+console.log(x);                                       -------------------> different error : referecence error : x is not defined
+}
+
+
+
+
+ch : 95 :  This keyword
+special keyword that is created for every function. 
+
+const jatin = {
+   name : 'Jatin',
+   year  :  1989,
+   calcAge : function (){                    -----------------> where calcAge is a method
+        return 2037 - this.year;           ------------------> this = jatin object ; this.year = 1989
+   }
+}
+
+jonas.calcAge() -----> 48
+
+how we can call this : 
+i. Method  : this  = <object that is calling the method> 
+ii. Simple function call : this = undefined (talking about strict mode else it would target window object)
+iii.  Arrow functions  : this  = < this of the surrounding function (parents this keyword as arrow function don't have there own this keyword)
+iv.  Event listener :  this  = <DOM element that the handler is attached to >
+
+this does not point to the function itself
+
+this keyword in global target window object : 
+console.log(this) -------------------> window object
+
+this keyword inside an function declaration/expression gives us undefined: 
+const calcAge = function(birthYear){
+console.log(2023-birthYear);  -----------------> 22
+console.log(this); --------------------> undefined   
+}
+calcAge(2001)
+
+this keyword inside an Arrow function gives us this keyword of their parent as Arrow functions don't have there own this keyword :
+const calcAge2 = birthYear =>{
+console.log(2023-birthYear);  -----------------> 22
+console.log(this); --------------------> window object as the parent of the this arrow function will be global scope.
+} 
+
+this keyword inside an object's method gives us the object whose method has called it.
+const jatin = {
+year : 1991,
+calcAge : function(){
+console.log(this);    -----------------> { year :1991, calcAge : f }
+          }
+  }
+jatin.calcAge()
+ --------------------------------------------
+const matilda = {
+  year : 2001 
+}  
+
+// Method Borrowing following DRY principle
+matilda.calcAge = jatin.calcAge;  // now both object has calcAge method 
+matilda.calcAge()  //---> here the this keyword will be matilda so  { year :2001, calcAge : f }
+
+const func = jatin.calcAge;  // ------> so now func is now function that will print console.log(this)
+func()  //--------> undefined because this keyword value inside a regular function is undefined
+
+
+Day : 1
+Remember that variable made with "var" are saved in Global Window Object
+Also don't use arrow function as object's methods
+
+This keyword inside an Object Method -> Function :
+const Jatin = {
+      firstName : 'Jatin',
+      year : 2001,
+      calcAge : function(){
+              console.log(this) ------------------------> Object that is calling this like 'Jatin' 
+              console.log(this.year)  -------------------> 2001
+// Creating a function and calling it inside the method
+                
+               const isMillenial = function(){ -------------------------> Normal Function
+                          console.log(this);  -------------------------------> Undefined 
+                          console.log(this.year>=1981 && this.year<=1996);  -------------> undefined.year will be an Typeerror
+                 }
+                isMillenial() 
+        }
+}
+
+
+So that will throw an error So how can we solve this ?
+Solution 1 : using variable = this
+Ans. We can create a variable that will be assigned to this and can use it inside the isMillenial function. When we will say variable.year where that variable is not present inside the isMillenial function, it will search that in parent scope where it's defined as object : 
+
+const Jatin = {
+      firstName : 'Jatin',
+      year : 2001,
+      calcAge : function(){
+              console.log(this) ------------------------> Object that is calling this like 'Jatin' 
+              console.log(this.year)  -------------------> 2001
+              let self = this; ------------------------> here we have assigned self to this and use it inside isMillenial()
+ // Creating a function and calling it inside the method                
+               const isMillenial = function(){ -------------------------> Normal Function
+                          console.log(self);  -------------------------------> goes into parent scope where this = Object
+                          console.log(self.year>=1981 && self.year<=1996);  -------------> false
+                 }
+                isMillenial() 
+        }
+}
+
+Solution 2 : using arrow function as it get their parent's this 
+const Jatin = {
+      firstName : 'Jatin',
+      year : 2001,
+      calcAge : function(){
+              console.log(this) ------------------------> Object that is calling this like 'Jatin' 
+              console.log(this.year)  -------------------> 2001
+ // Making the function Arrow so it get the this keyword of its parent
+               const isMillenial = ()=>{ -------------------------> Normal Function
+                          console.log(this);  -------------------------------> goes into parent where this = Object
+                          console.log(this.year>=1981 && this.year<=1996);  -------------> false
+                 }
+                isMillenial() 
+        }
+}
+
+
+
+
+About Arguments keyword : there is more modern way to get n number of parameters in function but this also exist!!
+
+a. Normal function : 
+
+const addExpr = function(a,b){
+         console.log(arguments)
+        return a+b;
+}
+
+addExpr(2,5)  ----------------> console -> Arguments Object ->  [   0 : 2     1 : 5 ......   ]
+
+// if we give more than required arguments then also there is no problem like
+addExpr(2,5,6,8)   --------------->  console -> Arguments Object ->  [   0 : 2     1 : 5   2 : 6    3 : 8   ......   ]
+Say thanks to arguments but this only works in regular/normal function 
+
+
+b. Arrow Function :  
+const addExpr = (a,b) => {
+         console.log(arguments)
+        return a+b;
+}
+
+addExpr(2,5)  ----------------> console -> reference Error: arguments not defined
+
+
+
+
+
+
+
+// Primitives && Non-primitives 
+Primitive Data types : Number, String, Boolean, Undefined, Null, BigInt && Symbol            ----------> primitive types
+Everything else is an Object  Like : Array, functions, Object          ---------------------------------------> reference types 
+
+names are kept because of the different way in which they are stored in memory ,
+
+In Primitive : 
+let age = 30;
+let oldAge = age;
+age=31
+console.log(age)   ----------------------> 31   (Simple)
+console.log(oldAge) ---------------------> 30  (Simple)
+
+In Non-Primitive :
+const me = {
+     name : 'Jatin',
+     age : 10
+}
+
+const friend = me
+friend.age = 20
+console.log( friend ) ----------------------> { name : 'Jatin' , age : 20 }    ------> Ok
+console.log( me )  -------------------------> { name : 'Jatin' , age : 20 }   ------> Strange as we have changed for friend object only
+
+
+We have to keep remember about JavaScript engine ;
+It has two components : callstack --> Where functions are executed and to heap where objects are stored in memory (only for reference types)
+Primitives types are stored in callstack
+Reference types are stored in heap
+
+
+/*
+let age = 30;
+let oldAge = age;
+age=31
+console.log(age)   ----------------------> 31   (Simple)
+console.log(oldAge) ---------------------> 30  (Simple)
+
+So here age -> 0001 -> value -> 30 
+            OldAge -> 0002 -> value -> 0001 ->value ---> 30
+              age -> 0001 -> value changed -> 31
+
+Solved issue 1
+*/
+
+
+
+/*
+const me = {
+     name : 'Jatin',
+     age : 10
+}
+
+const friend = me
+friend.age = 20
+
+
+
+In heap  
+
+   Address -> D30F , Value ->  {  name : 'Jatin' , age : 10 } 
+
+
+
+in callstack
+
+    Identifier -> me ,  Address -> 0004 , Value  -> D30F (reference to memory address in heap)
+
+
+   When we declare a variable as an object, an identifer is created, which points to a piece of memory in the stack which in turn points to a peice of memory in the heap and that is where the object is actually stored this is because objct can be too large to be stored in the stack. Instead they are stored in the heap, which is like an almost unlimited memory pool and the stack just keeps a reference to where the object is actually stored in the heap so that it can find it whenever it's necessary 
+
+So now we creates a new object "Friend" , a new identifier will be created with "friend" name and it will point to the same address
+ It won't create a new object in the heap. It's simply just another varibale in the stack which holds the reference to the original object.
+So both of the two objects are pointing to the same memory address in the heap because in the stack they both hold the same memory address reference
+
+    Identifier -> Friend ,  Address -> 0004 , Value  -> D30F (reference to memory address in heap)
+   So it's exactly the same object "me" but with different identifier name sharing same memory "D30F"
+    
+
+
+So here me -> 0001 -> value -> { name : 'Jatin',   age : 10 }                      ->  { name : 'Jatin',   age : 20 } 
+            friend -> me -> 0001 -> value ->  { name : 'Jatin',   age : 10 }       |
+              friend.age  -> 0001 -> age -> 10 --> age -> 20  -----------------|
+
+Solved issue 2
+*/
+
+
+
+
+
+Object.assign()  : Only upto one level,
+
+What if we want changes in one object should not reflect the other object ?
+For that we can use of Object.assign : this merge two objects and return the new one
+
+const khushi ={
+ firstName : 'Khushi',
+ lastName  : 'Maheshwari'
+ family : ['darshan','manoj']
+}
+
+const marriedKhushi = Object.assign( {} , khushi ); ---------> this will merge a empty object and khushi object so that all the properties/methods are copied and stored in a new object "marriedKhushi" in the heap
+
+
+marriedKhushi.lastName = 'Joshi'
+//So it will only effect the marriedKhushi and not khushi
+
+Note ---->Goes upto one level only, means if there is an object inside an object it might not work as we want. We want Deep clone and not a shallow copy. For example there is an 'family' Array (Object) inside the 'khushi' object and that will be copied to both two objects : khushi and marriedKhushi. So far so good. 
+But if there is change in marriedKhushi like the family increases : 
+
+marriedKhushi.family.push('yashu');
+marriedKhushi.family.push('pushpa');
+
+This will effect in both the object as now both will show family with 4 elements.
+So that is not what we want
+
+We want a deep clone later............
+
+
+
+
+
+
+
+
+
+Destructing Array
+
+const arr = [2,13,5]
+const [x,y,z] = arr;
+x -> 2 , y -> 13,  z-> 5
+
+const categories =  ['pizza','burger','pasta','roll','fries'];
+const [first,second] = categories
+first -> pizza, second -> burger
+
+const [first, , second] = categories   -----> skipped the second element
+first -> pizza, second -> pasta
+
+
+
+
+#Swapping 
+first = pizza ; second = pasta 
+first = pasta; second = pizza
+
+How?
+const categories =  ['pizza','burger','pasta','roll','fries'];
+let [ first, second ] = categories
+[ first, second ] = [ second , first ]
+
+
+#Nested Destructing
+const arr = [ 5 , 6 , [ 8 , 9 ] ]
+const [ a ,  , [ b , c ]  ] = arr 
+a -> 5, b -> 8 , c -> 9
+
+
+#More than have : undefined 
+const arr = [ 4 , 5 ]
+const [ a , b , c ]  = arr
+a  -> 4, b -> 5 , c -> undefined
+
+
+#Set Default value
+const arr = [ 4  ]
+const [ a=1 , b=1 , c=1 ]  = arr
+a  -> 4, b -> 1 , c -> 1
+
+
+
+
+
+
+
+
+Destructing Object
+you have to use the same property name as mentioned in the object
+Here the order doesn't matter 
+
+let hotel = {
+  name : "sarvottam",
+  categories : ["Italian","Pizzeria","Vegetarian","Garlic Bread"],
+  mainMenu : ["Pizza","Pasta","Risotto"],
+  openingHours : {
+                   thr : { open : 12 , close : 22 },
+                   fri  : { open : 11 , close : 23 },
+                   sat : { open : 0 , close : 24 },
+              },
+  order : function (starterIndex,mainIndex){
+              return [this.starterMenu[starterIndex] , this.mainMenu[mainIndex] ]   
+     },
+};
+
+const {name ,openingHours,categories} = hotel;    --------> order is not there but it's works
+
+
+
+#If you want a new name to be used : 
+const {name : hotelName, openingHours : hours, categories : tags} = hotel;
+
+
+# to set a default value i the object , Same as in Array
+const { menu = [] , starterMenu : starters = [] } = hotel;
+as starterMenu is already there in the hotel object so empty array won't be assigned but menu will be created which is an array with empty value.
+
+
+# to mutate the existing variable and reassigned there values using the object properties
+let a =111;
+let b = 999;
+const obj = { a : 23 , b : 7 , c : 14 };
+( { a , b  } = obj  ); ----------------------> now a = 23 and b  = 7
+
+
+#Nested Object : inside hotel, there is an openingHours Object and inside that we have more objects like thru,fri, sat.which has open and close info.
+
+let destruct that : 
+
+let { openingHours } = hotel;
+let { fri } = openingHours  ----------------> ok no problem
+let { fri : { open , close } }  = openingHours  ;  -----------> open  = 11, close  = 23
+
+We can change the name also  : 
+let { fri : { open : OP , close : CL } }  = openingHours  ; 
+
+
+
+
+# Where to use this : Example 
+ 
+let hotel = {
+  name : "sarvottam",
+  categories : ["Italian","Pizzeria","Vegetarian","Garlic Bread"],
+  mainMenu : ["Pizza","Pasta","Risotto", "Burger" , "Manchurain"],
+  openingHours : {
+                   thr : { open : 12 , close : 22 },
+                   fri  : { open : 11 , close : 23 },
+                   sat : { open : 0 , close : 24 },
+              },
+  order : function (starterIndex,mainIndex){
+              return [this.starterMenu[starterIndex] , this.mainMenu[mainIndex] ]   
+     },
+
+  orderDelivery : function ( { orderDeliveryTime= "23: 40" ,orderAddress ,mainIndex = 0   } )    --------------------------------------------> Here we have destructred the Object
+  { 
+      console.log (` Order Delivered!!  Your order : ${ this.mainMenu[ mainIndex ] }   is sent to the address : ${ orderAddress } , Expected Delivery Time :   ${ orderDeliveryTime }. `);
+  }
+};
+
+
+  hotel.orderDelivery( {  orderDeliveryTime : " 24 : 00 " ,  orderAddress  : " Vatika Town Ship, Parvat Patia, Surat " , mainIndex : 3  }  )  -----------------> 
+O/P : Order Delivered!!  Your order : Burger  is sent to the address :  Vatika Town Ship, Parvat Patia, Surat, Expected Delivery Time :  24 : 00  . 
+
+  hotel.orderDelivery( {,  orderAddress  : " Vatika Town Ship, Parvat Patia, Surat "  )  -----------------> 
+O/P : Order Delivered!!  Your order : Pizza is sent to the address :  Vatika Town Ship, Parvat Patia, Surat, Expected Delivery Time :  23 : 40  . 
+
+
+
+
+
+
+
+
+# Spread Operator :
+
+let arr = [ 1 , 2 , 3 ];
+let newArr = [  4 , 5 , 6 , . . . arr ]  ------------------->  [ 4 , 5 , 6 , 1 , 2 , 3 ];
+
+console.log( . . . newArr )  --------------------------> 4  5  6  1  2  3 
+
+
+# Real world Example : 
+ let newMenu = [  . . . hotel.menu, ' Vadapav ' ,  '  Misalpav '  ];
+
+
+Note  : Iterables are arrays, strings, sets, maps but not Objects
+
+We can also spread a string in an array : 
+ let name = "Jatin";
+ let fullName = [ ' Mr. '  , ' ' ,  . . . name ]
+
+Note :  you can't use spread operator inside an template literal :   ` $ {  . . . name }  ` 
+
+You can alo use spread with objects
+let newHotel = { foundedIn : 2001  ,  . . . hotel , Founder : 'Jatin'  }  --------->  to create a copy of an object with additional details
+let hotelCopy = { . . . hotel }          ------------------------------------------> To create a copy of an Object
+ 
+
+
+
+
+
+# Rest Pattern and Parameters : Opposite of Spread
+Spread : to unpack an array
+Rest  :  to pack elements into an array
+
+
+Spread : Because it's on the Right side of the =
+let arrWithSpread = [ 1, 2,  3 , . . . [ 5 , 6 , 7  ] ];
+
+
+Rest : Because it's on the Left side of the =
+let [  First , Second , . . . others ] = [ 1, 2,  3 , 5 , 6 , 7  ];  -----------> First  = 1 , Second = 2 , others = [  3 , 5 , 6 , 7 ]
+
+let [ pizza ,  , risotto , . . . others  ]  =  [ . . . hotel.mainMenu , . . . hotel.starterMenu  ]         ---------------> it used unused element of destructing array/object so always  make the rest element as the last element 
+
+
+ rest in Objects
+
+let { sat , . . . weekdays }  = hotel.openingHours;  ------------------------>  sat  =  { open : 0 , close : 24 } , weekdays =  { thr : { open : 12 , close : 22 }, fri  : { open : 11 , close : 23 }}
+
+
+
+# Where to use this rest pattern ? 
+When you want arbitary number of paramters in a function ;like : 
+add(  1, 3 )
+add(  2 ,4, 8, 9, 10 )
+add( 4, 6, 3, 3, 43, 53, 9) 
+
+Here we are taking multiple values as an paramter and pack them into an array
+function add ( . . . numbers  ){  console.log( numbers )   }  ----------------> [ 1 , 3 ]   ,  [ 2 ,4, 8, 9, 10 ] , [ 4, 6, 3, 3, 43, 53, 9 ]
+
+
+
+
+
+
+
+
+
+#  Short Circuiting
+In Or  = He will search for the truthyvalue , as as he got one he will return that unless we are going to get thee last element
+In And  = He will search for the falsy value , as as he got one he will return that unless we are going to get thee last element
+
+
+Falsy values = NaN , "" , undefined, null , 0  and false
+
+console.log( 4 | |  ' Jatin '  )   ----------> 4 as 4 is a truthyvalue so it will immediately return that
+console.log( 4 | |  ' Jatin '  )   ----------> 'Jatin' as there is no falsy value and this is the last element
+
+
+Where to use ? 
+instead of using ternary operator like this : 
+
+let numGuests =  hotel.numGuests ? hotel.numGuests : 10;
+console.log ( numGuests )   ;     -------------------------------------------> as hotel.numGuests is not there, we will get 10.
+
+Using Short circuiting : 
+let numGuests =  hotel.numGuests ||  10;  -------> if there is any true value in numGuest of the hotel it will be returned else 10 will be returned
+
+
+Where to use ?? 
+Instead of using : 
+if( hotel.orderFood ){  hotel.orderFood( 'mushroom' , ' spinach'  ) };
+
+use shortcircuting And because if it's false nothing will work if the value is true then only function will be called  : 
+hotel.orderFood && hotel.orderFood( 'mushroom' , ' spinach'  );
+
+Nullish coalescing operator ? ? : It removes 0 and  empty string ' '  from the falsy value and return the true value (including 0 and ' ' ) and it it didn't get one we will get the last element
+ 0 ? ?  true -------> 0
+null ?? undefined ?? ' ' ?? 'true'  ---------> ' '
+null ?? 0 ?? 'true'    ----------->  0
+
+
+
+
+
+
+# Logical Assignment operator
+
+let rest1 = {  name : ' Capri ' , numGuest : 20  } 
+let rest1 = {  name : ' Pizaria ' , owner : ' Jatin Sharma '  }
+instead of 
+rest1.numGuest = rest1.numGuest || 10; 
+rest2.numGuest = rest2.numGuest || 10; 
+use this : 
+rest1.numGuest  ||=  10;  --> if rest1 object doesn't have any numGuest then make 10 as default
+
+
+rest2.owner = rest2.owner && "<Anonymous>";  ---------> if you want that if there is any owner attribute mentioned in the rest2 then make it to "Anonymous"
+rest2.owner &&= "<Anonymous>";
+ 
+
+
+
+ 
