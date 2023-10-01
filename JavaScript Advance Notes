@@ -570,4 +570,71 @@ rest2.owner &&= "<Anonymous>";
 
 
 
+
+
+------------------------------------------------------------> New Day
+
+
+#Loops in Javascript
+
+For of loop : 
+const arr =  [ 1 , 2 , 3 , 4 , 5 , 6 , 7 ]
+for ( const item of arr ){  
+    console.log( item )
+  }
+
+Note : To get the index, it's a bit of a pain but you can get it by this way:
+for( const item of arr.entries() ) { 
+       console.log(items)
+  }
+
+O/P :  [ 0 , 1  ] , [ 1 ,2 ], [ 3 , 4 ], [4 , 5] , [ 5 , 6 ]...
+
+Now as we know that items.entries()  give us an array of arrays where each element is an array of two elements, i. index and ii. the content/value
+
+so we can destructing it and use it : 
+for( const [ i , value ] of arr.entries() ) { 
+       console.log( `  ${ i+1 } : $ { value } ` );
+  }
+
+
+
+
+
+
+
+
+
+
+#Optional chaining : Important 
+only if the property exist that is before the question mark then only after the question mark property will be read but if not then immediately undefined will be returned. and Exists here actually means the nullish concept, so a property exists if it's not null and not undefined so if it's zero or the empty string, then it still exists.
+
+We know that inside the hotel there is an openinghours for thrus, fri & sat. If we tried for monday that doesn't exist then we will get undefined. and if we tried open property of it ( monday ) we will get an error. so to avoid that error we will use optional chaining :
+
+console.log( hotel.openingHours.mon.open ) ----------> Type-error : cannot read property 'open' of undefined  
+console.log( hotel.openingHours.mon?.open ) ----------> undefined
+ 
+console.log( hotel.openingHours?.mon?.open ) ----------> if inside hotel, there is any property named openingHours, if yes then go further and check whether it has mon in it and if yes then go to open . in any case there is false statement like it doesn't exist then we wil get undefined.
+
+
+Example : 
+const days =   [  'mon' , 'tue' , 'wed' , 'thru' , 'fri' , 'sat' , 'sun'  ];
+for ( const item of days ){
+     const open = hotel.openingHours[ days ] ? . open  || ' closed '     ------> instead of showing undefined, it will show ' closed ' but now 0 will also count as  'falsy' value' 
+
+      const open  = hotel.openingHours[ days ] ? . open ? ? ' closed '
+     console.log( ` On $ { day }, we open at $ { open }  ` )
+}
+ 
+
+
+ Now to call a method rather than working on the properties : 
+const obj =  { order :   function ( i,j ) {  console.log(  this.starterIndex[i] +  '  and  '  this.menuIndex[j] )  } } 
+console.log( obj.order ?. ( 3 , 5 )   ? ?  " Method does n't exist " ) 
+
+
+To check whether the array is empty or not : 
+const users = [ {  name : 'Jatin' , email : ' thisisjatinn@gmail.com'  } ];
+console.log( users[0] ? . name ??  " User Array is empty " ) 
+
  
