@@ -637,4 +637,303 @@ To check whether the array is empty or not :
 const users = [ {  name : 'Jatin' , email : ' thisisjatinn@gmail.com'  } ];
 console.log( users[0] ? . name ??  " User Array is empty " ) 
 
+
+
+
+
+
+
+
+
+
+
+
+Object.keys(object name) : to know the object keys
+we know that in our hotel openingHours, we have three keys : thru,fri and sat.
+for (let days of Object.keys( hotel.openingHours )  ){
+  console.log( day );
+}   
+
+const properties =  Object.keys( hotel.openingHours );  --------> [ 'thru', 'fri' , ' sat '  ];
+
+
+
+Object.values(object name) : to know the object values and not on the keys
+Rather than focusing on : three keys  : thru,fri and sat, we will focus on their values : {open : 22, close : 0}...
+for (let hours of Object.values( hotel.openingHours )  ){
+  console.log( hours );
+}   
+
+const values =  Object.values( hotel.openingHours );  --------> [ { open : 22, close : 06 }, { . . . }, { . . .} ];
+
+
+
+Object.entries( object na me ) : to get both, keys and the values we use entries()
+
+const entries =  Object.entries( hotel.openingHours );  --------> [  Array(2)  ,  Array(2) ,  Array(2) ];
+3 Array : [thru : obj], [ fri :obj] , [sat : obj]
+of two elements each : key and value
+
+ for ( const [ day, { open , close } ] of Object.entries ( hotel.openingHours ) ){
+    console.log ( ` On $ {day }, we are open at $ { open } and close at $ { close } ` )
+}
+
+
+
+
+
+
+
+
+
+
+
+# SETs  : 
+We can also work with String in here  :  new Set ( ' Jatin ' )
+to know the length of an array : arr.length
+to know the length of an set : set.size
+
+to check whether some element is in an array : arr.includes( 'Pizza'  ) -----> true / false
+to check whether some element is in an set : set.has( 'Pizza'  ) -----> true / false
+
+ to add an element inside an array  : arr.push(  'Garlic Bread' );
+ to add an element inside the set  :  set.add( ' Garlic Bread ' );
+
+to remove an element from the array :  arr.pop();   ( OR )  other ways like unshift or using filter method
+to remove an element from the set  : set.delete('Garlic Bread')
+
+to make the set empty : set.clear()
+
+Looping an set is possible : 
+for( const item of set ) {  console.log( item )  } 
+
+Converting a Set into an array : 
+const removeDuplicate = [  . . . new Set ( duplicate )  ]
+
+ to know how many unique letters are in your name;
+const name = ' jatin sharma' ;
+console.log(  new Set ( name ) .size )
+
+
+
+Note : There is a Map Data structure but we will learn it later chapter  : 117
+
+
+
+
+
+
+
+
+
+
+
+# First class function and Higher Order function  -  VERY VERY IMPORTANT !!!!
+
+first class function : When functions are treated like any other variable. For example : a function can be passed as an argument to other functions, can be returned by another function and can be assigned as a value to a variable.
+
+Assigning a function to a variable
+const foo = () =>{ console.log('foobar') };
+
+Passing a function as an argument
+function sayHello() {  return "Hello, " ; }
+function greeting ( helloMessage, name ) {  console.log( helloMessage() + name ) ;  }
+greeting( sayHello , " JavaScript ! " );
+
+// Say hello ka dusra naam he helloMessage ho gyaa hai, both are functions that is taken as argument
+
+Returning a function 
+function sayHello(){  return ()=> { console.log("Hello !"); };  }
+
+
+Higher-order Functions : 
+a function that receives another function as an argument, that returns a new function, or both
+this is only possible because of first-class functions
  
+function that receives another function : 
+const greet =( ) => console.log ( ' Hey Jatin' );
+btnClose.addEventListener( ' click ' , greet );  -------> here addEventListener is an higher order function
+
+Function that returns a function : 
+function count ( ) {   ----------> count is the higher order function 
+  let counter = 0 ;
+  return function( ) {     ------------> returns a function
+   counter ++;
+    }
+}
+
+
+Difference between both  : 
+First class function  is all functions are values. There are no first class functions in practice. It's just a concept.
+There are however higher order functions in practice which are possible because the langugae supports first class function.
+
+
+--> nice example of higher order function : 
+
+const oneWord = function ( str ) { 
+    return str.replace( ' ', ''  ).toLowerCase();
+}
+
+const upperFirstWord = function( str ) {
+    const  [ first , ...others ] = str.split( ' ' );
+    return  [first.toUpperCase() , . . . others]. join ( ' ' );
+}
+
+const transformer = function ( str, fun ){
+    console.log( ' Orginal String :  $ { str }' );
+    console.log ( ' Transformed String : $  { fun ( str ) }  ' );
+    console.log ( ' Transformed By : $ { fun.name } ' )
+}
+
+-----------------------------------------------------------------------------------
+transformer( ' JavaScript is the best!', upperFirstWord )
+
+Orginal String :  JavaScript is the best! 
+Transformed String :  JAVASCRIPT is the best! 
+Transformed By : upperFirstWord
+ ----------------------------------------------------------------------------------
+transformer( ' JavaScript is the best!', oneWord )
+
+Orginal String :  JavaScript is the best! 
+Transformed String :  javascriptisthebest! 
+Transformed By : oneWord
+
+------------------------------------------------------------------------------------
+
+const greet = function  ( greeting ) {  return  function ( name ) { console.log( ` $ { greeting } $ { name } ` )  } ; } ;
+
+const greeterHey = greet( 'hey' );
+greeterHey( 'Jonas');
+(OR)
+greet( 'Hello'  )( 'World' ); 
+
+------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+Call, Bind and apply method : 
+
+Bind Method
+const lufthansa = { 
+ airline : " Lufthansa ",
+ iataCode : 'LH',
+ bookings : [] ,
+ book( flightNum, name ) {
+     console.log ( `$ { name } booked a seat on $ { this.airline } flight $ { this.iataCode }$ { flightNum } `);
+     bookings.push( {  Flight : `$ { this.iataCode }$ { flightNum }`,  name } );
+  }
+}
+
+
+lufthansa.book( 239, 'Jatin Sharma' )
+lufthansa.book( 349, 'Narendra Modi ' )
+
+
+
+const eurowings = {
+ name : 'Eurowings' , 
+ iataCode : 'EW',
+ bookings : [],
+}
+
+// instead of writing the book method again in the eurowings will violate the DRY principle so let create a variable that store that function bcz JS has first class function: 
+const book = lufthansa.book
+book( 789, ' Jonas schmedtmann' ); ---------> Error bcs here this = undefined , and we want this.airline
+
+// To use book method we will use call method : 
+Syntax : book.call(  objectName , arguments  )  --------> here objectname means this will target to this object
+Example : book.call( eurowings , 789 , ' Jonas schmedtmann' )
+
+
+Apply method 
+same as call method but only difference is it takes the arguments in the form of array like
+const arrayArguments =  [  719 ,  ' Andrei neagoie ' ] 
+book.apply( eurowings , arrayArguments );
+
+
+Bind Method
+here it returns a function which is binds to the object and you can call that function with given arguments. 
+const bookEurowings = book.bind(  eurowings )
+const bookLufthansa = book.bind(  lufthansa  )
+const bookSwiss = book.bind(  swiss )
+
+
+bookEurowings ( 832 , ' Salman Khan ' )
+bookSwiss ( 912 , ' Sahid Kapoor' )
+bookLufthansa ( 332 , ' Badal Chhipa ' )
+
+
+ / /  You can assign this to object using bind. Now If you want to fix argument you can do that also like book takes two argument : flightNum and name and you want flightNum to be fixed as 234
+const bookEurowings234 = book.bind( eurowings , 234 );
+bookEurowings234 ( ' Mukesh Ambani ' )
+bookEurowings234 ( ' Rajesh Khaana' )
+
+
+
+// as we know that when we call a method that uses 'this' keyword and that is called whenever we click on some element then this targets to the Dom element.
+lufthansa.planes = 300;
+lufthansa.buyPlanes = function (  ){
+   console.log ( this );
+   this.planes++;
+   console.log( this.planes )
+}
+document.querySelector( '#BuyButton ' ).addEventListener( ' click '  , lufthansa.buyPlanes )  -------> this gives us dom element and NaN ( this.planes )
+
+//Now we know that we need to attack it with the object rather than dom element so we can use either call or bind but call call's the method and we don't want to call rightnow so we will go with bind that will return a new func
+
+document.querySelector( '#BuyButton ' ).addEventListener( ' click '  , lufthansa.buyPlanes.bind( lufthansa ) )  
+
+
+
+
+
+
+
+
+
+
+#Closure :  it not something that we do manually, it happens manually
+const secureBooking = function( ){
+ let passengerCount = 0;
+ return function( ) { 
+    passengerCount++;
+    console.log(passengerCount ) 
+   };
+};
+
+ let booker  = secureBooking( )
+
+booker() ----> 1
+booker() ----> 2
+booker() ----> 3
+
+//question is how he get the access of passengerCount as it get off from the callstack .
+Ans. Closure makes a function remember all the variables that existed at the function's birthplace essentially, so we can imagine secureBooking as the birth place of return function so this return function remembers everything at its brithplace by the time it was created
+Or
+a function doesn't lose connection to the variables that existed at the function's birthplace
+Or
+a closure is like a backpack that a functions carries around wherever it goes. This backpack has all the variables that were present in the environment where the function was created 
+
+Easy example : 
+let f;
+const g = function(){
+ const a = 23;
+ f = function() { console.log( a*2 ) }
+}
+
+g()  ------> function got assigned to f variable { a*2 } which doesn't have 'a' variable 
+f()  ------->  still it return 46, this is closure
+
+
+
+
+
