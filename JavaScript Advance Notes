@@ -937,3 +937,99 @@ f()  ------->  still it return 46, this is closure
 
 
 
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+
+New Day : Array Methods
+
+#Array Methods
+slice
+splice : mutate the original array
+reverse : mutate
+concat : arr.concat( arr2 )
+join : [ ' A' , ' B '  ].join(' - ' )   ----> A-B
+split 
+at : arr[0]  -------> arr.at( 0 ) , arr[ arr.length-1 ] -------->  arr.at(-1) , also works with string
+forEach  -----> element, index  , Note ------> you cannot break out from forEachLoop
+for of loop ------> for( const [ i, element  ]  of array.entries() )
+Map --> creates a brand new array
+filter  --> to filter an array, elements which satisfy the conditions will be inserted in the new array
+reduce  --> give one value at the end, no new value
+find --> same as filter but it does not return an new array but it returns only the 1st element that satisfy the condition, find return one element; where filter returns all element that fulfil his conditions; filter returns a new array but find only returns the element best to get the data like account login with the password 
+findIndex  --> give the index of the found element that satisfies the condition
+some  ---> papa of includes as includes only take the element but some takes the condition and returns T/F so we can say that includes is for equality and some is for condition and filter takes the input and make an array which satisfy the condition, so we only want whether the condition is satisfied by anyone or not
+every  -----> when you wnt to know whthere all the elements of an array has satisfied the condition or not.  returns T/F
+flat  ------>     to flat the array to one level arr.flat()    [ 1 , 2 , [ 3 , 4  ] , [  3, 4 , 5 ] ]  -->  [ 1 , 2 , 3 , 4  ,3 ,4 , 5  ].
+ arr.flat(levelNumber)
+flatMap  ---> flat( at last it flats the map result) + map (1st ); Note -----It only goes one level deep
+sort --> for strings is simple, for number is different  , a-b : ascending, b-a descending
+Total 23 methods 
+
+
+
+-----If you want to add an html element from javascript into some container, use insertAdjacentHTML
+How ? 
+
+DOM_ELEMENT. insertAdjacentHTML (  position :   'afterbegin' / 'afterend' / 'beforebegin' / ' beforeend ', element you want to insert )
+
+let html = `<div>As per you want</div>`
+document.querySelector( ' .movements').insertAdjacentHTML (  afterbegin, html  ) 
+
+
+
+
+For login auth and checking whether thee account is there or not  : find
+For deleting an account we can use of : findIndex
+For taking an loan that check certain things whether they are satisfied or not of the current account :  some  
+For knowing whether all the elements satisfies the condition or not  : every
+For removing arrays from nested loop like [  1 ,2 [ 3, [  432 ] , 5 ] ,[3 ,5 ] ] to one arrray : flat
+
+
+Q . how to know which method should i use ?
+Ans 
+To mutate the original array
+push end mai add karne k liye
+unshift start mai add karne k liye
+pop end se nikalne k liye
+shift starting se nikalne k liye
+splice  koi bhi element ko nikalne k liye
+reverse  reverse karne k liye
+sort  sort strings or numbers elements
+fill  array mai elements dalne k liye
+
+
+A new array
+map iterate karne k liye
+filter  filter karne k liye wohi element honge jo condition fulfil karenge
+slice without argument apne ko copy of array return karega and args diye honge to remove karke dega
+concat do array ko combine karke array dega
+flat flat karne k liye nested arrays ko, by default 1 level he but we can specify the number of levels
+flatMap  mixer of flat and map jisme map phele run hota hai or uske result ko baadme flat karte hai
+
+
+Do i maybe want an array index
+indexOf based on value dhundega
+findIndex  based on test conditions dhundega
+
+Or do i want to retrieve an entire array element
+find to get the array itself based on some condition
+
+Or do i want to know whether an array includes 
+includes based on value, checks for equality 
+some  based on some condition, returns T / F , ek bhi true element mila toh T warna F
+every   based on some condition, returns T / F , sare T honge toh he true milega warna F
+
+Or maybe i want a new string
+join sare elements ko join kardega or ek string bana dega
+
+Or to transform an array to a new value
+reduce boils down to one value, isme ek accumulaot hota hai final variable jesa
+
+Or simply to loop over the array
+forEach 
+
+Total  : 23 Methods
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------
