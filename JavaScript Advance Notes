@@ -1033,3 +1033,161 @@ Total  : 23 Methods
 
 
 ----------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+Next Day  : Numeric separator
+
+
+
+
+To convert a String into Number : 
+Number('23')
++'23'
+
+#To get the Number from a String which starts from a number like '23px'  use : parseInt
+Number.parseInt('23px')  --->23
+Number.parseInt('px23')  --->NaN
+
+Number.parseFloat('2.3rem')  --->2.3
+Number.parseInt('2.3rem')  --->2
+
+#to check whether the number is number or not
+console.log(Number.isFinite('20')) -----> false
+console.log(Number.isFinite(20)) -----> true
+
+# to know the square root of a number :
+console.log(Math.sqrt(25)) -----> 5
+
+# to know the maximu out of some numbers :
+console.log(Math.max(1,4,2,5,23,19)) -----> 23
+console.log(Math.max(1,4,2,5,'23',19)) -----> 23
+console.log(Math.max(1,4,2,5,'23px',19)) -----> NaN
+
+
+# to generate  random number:
+Math.trunc( Math.random() * 6 ) + 1
+
+#to remove decimal part : trunc 
+Math.trunc(234.8678) ------> 234
+
+#to get the round figure : 
+Math.round(23.7) ----> 24
+Math.round(23.3) ----> 23
+Math.round(23.5) ----> 24
+
+
+#to get the higher figure : 
+Math.ceil(23.7) ----> 24
+Math.ceil(23.3) ----> 24
+Math.ceil(23.5) ----> 24
+
+#to get the lower figure : ( all do type coersion ) 
+Math.floor(23.7) ----> 23
+Math.floor(23.3) ----> 23
+Math.floor(23.5) ----> 23
+
+Math.floor(-24.4) -------> -25
+Math.trunc(-24.4) -------> -24
+
+
+
+#If the number is very big and you want to write it into good & readable format, use underscore :
+const diameter = 287_460_000_000;
+console.log(diameter)  ------>287460000000
+
+const price = 55_21;
+console.log(price)   -----> 5521
+
+Rules : 
+can't use two underscore together
+can't use it in the starting or ending of the number
+can't use it right after dot ( . )
+if there is a string '23000' you can convert it into number but if there is an underscore you can't convert it into number using Number('23_000') --> NaN
+parseInt('23_000')-----> 23 and not 23000
+
+
+
+Note : you will get a nodeList when you use document.querySelectorAll('.row'), so to make it an array :   [ . . . document.quersySelectorAll('.row')  ]
+
+
+
+
+
+
+
+
+
+
+
+#Big Int 
+
+Numbers are represented internally as 64bits means there are exactly 64 ones or zeros to represent any given number and out of these 64 bits only 53 are used to actually store the digits themselves the rest are storing the decimal points and the sign
+
+If there are only 53 bits to store the number that means that there is a limit so the biggest number is
+( 2 ** 53 - 1 )  = 9007199254740991     
+-1 is because the number starts from 0
+
+This is stored as an global variable in Number.  console.log( Number.MAX_SAFE_INTEGER )
+
+After this number, Js won't give us an accurate answer 
+
+For using Big Intgers you can use the Type BigInt(number) or add 'n' in the end of the large number :
+console.log( BigInt ( 765456782653273273277 )  )
+OR
+console.log( 92783872832937264283n ) 
+
+BigInt also works the same like 2000n + 1000n = 3000n  
+But you can't mix BigInt with normal integers  : 2000n * 3  = Erro 
+but you can work like comparsion between both : 2000n > 5   = true
+
+
+
+
+
+
+
+
+#SetTimeOut and SetInterval
+
+Syntax : setTimeout( ( parameters) = >  {   } , time , arguments )
+Example :  setTimeOut(  ( ing1 , ing2 ) => {  console.log( ` your pizza with $ { ing1 } and $ { ing2 } is on the way!!  ` ) } , 500 , 'olives' , 'spinach'   )
+
+
+You can stop the interval / timer too using clearTimeout( setTimeout(Name) )
+const ingredients = [  ' olives ' ,  '  spinach ' ];
+const pizzaTimer = setTimeout( ( ing1 , ing2 ) => { console.log( ` your pizza with $ { ing1 } and $ { ing2 } is on the way!!  } , 2000 , . . . ingredients )
+if( ingredients.includes( ' spinach ' ) clearTimeout( pizzaTimer ) )
+
+-So if there is spinach in the ingredients array , we will nott get the message from the setTimeout but if there is no spinach we will get the output without calling the pizzaTimer
+
+
+
+We use the setTimeout when we want to do things which should take some time to happen and happen only once.
+while in setInterval we do things that should keep going and going like a clock
+same syntax and example
+
+Time : // 
+let time = 100 // 100 seconds countdown
+const clockTimer = setInterval (  ( ) => {
+
+  //  but this will give us some ugly decimal numbers
+   const min = time / 60;     -----> 1
+   const sec = time % 60;    ----> 40
+  
+  // So will use trunc to remove ugly part and use padStart to show "1:5" as "01 : 05"
+   const min = String( Number.trunc ( time / 60 ) ) . padStart( 2 , '0' )  ;     -----> "01"
+   const sec = String ( Number.trunc ( time % 60 ) ) .padStart(  2 , '0' ) ;    ----> "40"
+
+   time--; 
+   
+   // to stop the timer when the time reachs 0
+    if ( time == 0 ){
+        clearInterval( clockTimer )
+     }
+
+}  , 1000 );
+
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------
