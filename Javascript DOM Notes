@@ -1,2 +1,83 @@
 Javascript DOM Notes : Section -> 13
 
+DOM concept 
+
+//Selecting Element(s)
+NodeList :   document.querySelectorAll(' .submitBtn ')
+It's not live
+
+HTMLCollection : document.getElementsByTagName('button') or ByClassName
+It's live means if you will delete any element than the HTML collection will also reflect
+
+
+
+// Creating and inserting elements 
+const message = document.createElement('div');
+
+// add class to the element
+message.classlist.add('cookie-message');
+
+// add text to the element
+message.textContent = 'We use cookies for improved functionality and analytics'
+(OR)
+message.innerHTML = `We use cookies for improved functionality and analytics <button class='btn-close'>Ok, Got it</button>` 
+
+// now show that in our website
+const parentContainer = document.querySelector('#fullscreen')
+parentContainer.prepend(message)
+- the newly created will be now our first child in the fullscreen element
+
+parentContainer.append(message)
+- the newly created will be now our last child in the fullscreen element
+
+Note :  It can't be at multiple places by using append & prepend both
+
+Note : append & prepend will bring the created element inside the 'parentContainer' body
+
+before(message)  
+this will  bring the created element before the parentContainer , outside it and before it
+
+aftere(message)
+this will  bring the created element after the parentContainer , outside it and after it
+
+
+//Remove an element
+element.remove()
+document.querySelector('.cookie-message').addEventListener( 'click' , ()=> { message.remove()  } )
+
+
+//-------------Styles-----------
+getComputedStyle(element) 
+
+To know the styles of some element we can't get it directly using :
+ console.log(message.style.height)
+To get we can use getComputedStyle() :
+ console.log( getComputedStyle( message ) )  ------> object of style like , height,width,bgcolor,color....
+ //to get the specific property value : 
+console.log ( getComputedStyle( message ).height )
+
+//to know a custom attribute value that is created by us and not by html
+const logo = document.querySelector(#logo);
+<img id='logo'  alt =''logoCompany' src='https://www.logo.com'  designer=''Jonas''/>
+console.log(logo.alt)   --> will print the value
+console.log(logo.src)   --> will print the value
+- console.log(logo.designer)   --> will print undefined 
+--> to print : console.log( logo.getAtrribute('designer') );    ---> "Jonas" 
+
+//to set an attribute 
+logo.setAttribute( 'company','bankist minimalist logo' )
+
+
+// data Attribute
+<img id='logo'  alt =''logoCompany' src='https://www.logo.com'  designer=''Jonas' data-version-number= '3.0'/>
+console.log(logo.dataset.versionNumber);
+
+
+// classes
+logo.classlist.add('c' , 'j')
+logo.classlist.remove('c', 'j')
+logo.classlist.toggle('c')
+logo.classlist.contains('c')
+
+
+
