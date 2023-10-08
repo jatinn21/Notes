@@ -81,3 +81,98 @@ logo.classlist.contains('c')
 
 
 
+
+
+------------------------------------------------------------------------------------------------------------------
+next day
+
+
+//smooth scrolling
+
+const btnScrollTo = document.querySelector('.btn-scroll-to');    // clicking this button will make scrolling
+const section1 = document.querySelector('#section--1');        // section we wnt to see when we click the btn
+
+btnScrollTo.addEventListener( ' click ' , (event)=>{
+   //select the section you want to scrolled to then apply .scrollIntoView method which takes an object with behavior attribute to 'smooth'
+
+  section1.scrollIntoView( { behavior : 'smooth' } )    // it works
+})
+
+
+
+
+// types of events
+to add event we use .addEventListener('click',alertMsg)
+to remove event we use  .removeEventListener('click',alertMsg)
+
+like : 
+const h1 = document.querySelector('h1');
+const alertMsg =  function( )  {  
+   alert(' You are reading the headline as you have your mouse over the heading !!');
+   h1.removeEventListener('mouseenter', alertMsg )
+ }
+
+h1.addEventListener('mouseenter' , alertMsg )
+
+
+
+
+// bubbling and capturing
+
+document >html > body > section > p > a.link
+
+Suppose the click element happens, we know that our click event will right generates, so that event is actually not generated at the target element, but it generates in the root of the document i.e very top of the DOM element.
+From there, the so-called capturing phase happens,  where the event then travels all the way down to the target element and it will pass to every parent element i.e html --> body --> section --> p --> a.link ( target element )
+
+As soon as the event reaches the target, target phase begins, where events can be handled right at the target using Event Listeners and then the attach function is executed and this all happens in the target phase.
+
+After reaching the target, the event then travels all the way up to the document route again : 
+a.link  --> p --> section --> body --> html --> document 
+this is called bubbling phase
+
+To understand well : check udemy 191 video , Amazing example 
+to stop propogation : e.stopPropagation()
+
+
+
+
+
+// Trick for scrolling to different link sections as per the link
+multiple links like about (#section--1), contact ( #section--2 ) ,features  ( #section--3 ) having same class = 'nav-links'
+
+//Scroll to the respected section
+const allLinks = document.querySelectorAll('.nav__link');
+allLinks.forEach(ele => {
+  ele.addEventListener('click', e => {
+    e.preventDefault();
+    const id = ele.getAttribute('href');
+    document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
+  });
+});
+
+
+
+// Above we are attaching the same function to all 3 elements, which is handy for now but what if we have 1000s of links elements? then it might reduce our application performance...
+for that, we will use event delegation, where the parent's function i.e ( ' .nav__links'  ) is used by the child elements  ( ' .nav__link ') 
+Approach :
+ 1. Add event listener to common parent element
+ 2. Determine what element originated the event
+ 3. Avoid other clicks events, only click to links should be take into consideration
+
+document.querySelector('.nav__links').addEventListener('click', e => {
+  e.preventDefault();
+  if (e.target.classList.contains('nav__link')) {
+    const id = e.target.getAttribute('href');
+    document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
+  }
+});
+
+
+
+
+
+  
+
+
+
+
