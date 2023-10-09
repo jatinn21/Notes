@@ -171,6 +171,109 @@ document.querySelector('.nav__links').addEventListener('click', e => {
 
 
 
+
+
+-------------------------------------------------------------------------------------------------------------------------
+Dom traversing
+
+How to generate a random color : 
+const randomColor = (min,max) => { 
+ const colorCode = Math.floor(   Math.random() * (min-max +1 )  + min );
+ return colorCode;
+ }
+
+const color = () => `rgb(${ randomColor(0,255) , ${ randomColor(0,255) , ${ randomColor(0,255)   })`
+  color = rgb(123,38,93)
+
+<html>
+   <body>
+            <div class='grandparent' id='grandparrent-id'>
+                       <div class='parent'>
+                                  <div clas='child' id='child-one' ></div>
+                                  <div clas='child' id='child-two'></div>
+                        </div>
+                        <div class='parent'>
+                                  <div clas='child'></div>
+                                  <div clas='child'></div>
+                        </div>
+            </div>
+    </body>
+</html>
+
+
+
+Tips and tricks :  
+selecting elemet by id : 
+
+const grandparent = document.getElementById('grandparent-id')
+function changeColor( element ) {  
+      element.style.backgroundColor = '#333';
+}
+changeColor( grandparent ); 
+
+selecting elements by classname
+
+const parents = document.getElementsByClassName('parent')   ----> this will return an collection and we can't use forEach with collection
+// so make it an array
+
+const parents = Array.from(document.getElementsByClassName( 'parent' ))
+parents.forEach( ( element )  => changeColor(element))
+
+
+//  if you are using querySelectorAll then we don't have to make an Array.from( ) 
+
+
+children keyword :  used to get the children elements of that element, it will return html collection so nonproblem but you can't use forEach so use Array.from(htmlcollection)
+
+const grandparent = document.querySelector('.grandparend');
+const parents = Array.from ( grandparent.children )
+parents.forEach( ( element) => changeColor(element)  )     //only parent element's color will be change and not child
+
+
+const parentOne = parents[0]
+const children = parentOne.children
+
+changeColor(children[0])     // first parents first child's color will be changed
+
+// So till yet we understood how to go down the DOM, lets' go up from the bottom
+const childOne = document.querySelector('#child-one');
+changeColor(childOne)
+
+//So to select the parent element use .parentElement
+const parent = childOne.parentElement
+changeColor(parent)    ----> 1st parent color will be changed
+
+// to change the color of grandparent element
+const grandparent = parent.parentElement
+changeColor(grandparent)
+
+
+// what if you don't want to touch the parent from the child and want to call grandparent without callling parent element?
+//We will use .closest
+const childOne = document.querySelector('#child-one');
+const grandparent = childOne.closest(' .grandparent ')
+
+--closest works very similar to querySelectore except for it moves upwards instead of moving downwards, so you can pass it a selector in our case, our grandparent has the class of grandparent and what closest does is it select the closest parent element that has this selector
+
+-- so now we know how to go down the DOM , up the down, now we will learn how to go side by side means : going through siblings like in parentOne there are 2 child and we have selected the child one of parentOne and we want to access childtwo of the parentOne that means childOne and childTwo are sibling and we want to access one sibling from another, for that we will use nextElementSibling
+ 
+const childOne = document.querySelector('#child-one');
+const childTwo = childOne.nextElementSibling
+changeColor(childTwo)  ----> now the color of child two of parentOne will be changed
+
+//if you want to move from child two to child one, use previousElementSibling
+const childTwo = documet.querySelector('#child-two');
+const childOne = childTwo.previousElementSibling
+changeColor(childOne)
+
+
+
+// we also have firstElementChild, lastElementChild, as the name suggest what they do so no more description on that.
+
+
+
+
+
   
 
 
