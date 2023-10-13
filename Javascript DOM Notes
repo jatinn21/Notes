@@ -274,7 +274,232 @@ changeColor(childOne)
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------
+New day after many days 
+
+
+
+// Video : 194 ; tabbed feature clicking on the button shows the user the relevant content
+// div : operations  -- > div.operations__tab-container  --> button(.btn operations__tab operations__tab--1 operations__tab--active)
+// Followed with div.operations__content operations__content--1, div.operations__content operations__content--2, div.operations__content operations__content--3
+// And all divs content hav dataset attribute like 1st div content : dataset="1", 2nd div content : dataset="2".. 
+
+const tabContainer = document.querySelector('.operations__tab-container');
+const tabButtons = document.querySelectorAll('.operations__tab');
+const tabContent = document.querySelectorAll('.operations__content');
+
+// --------------This is a bad practice because what if there are 100s of button, then we have to assign the same function to each and every function🤕
+// tabButtons.forEach(tab =>
+//   tab.addEventListener('click', () => {
+//     console.log('tab');
+//   })
+// );
+
+//  We will use event delegation again
+//  in event delegation we have to attach the event handler to common parent element of all the elements that we are interested in i.e tabButton in our case so our common parent will be tabContainer
+
+tabContainer.addEventListener('click', function (e) {
+  const tabClicked = e.target.closest('.operations__tab');
+  // console.log(tabClicked); // parent ko dataset value dedo or jab uske child ya woh khud click ho toh parent ki value jaaye : closest('.className')
+
+  // when the tab button is clicked
+  if (!tabClicked) return;
+  // bringing the active tab button down
+  tabButtons.forEach(tab => tab.classList.remove('operations__tab--active'));
+  // lifting the clicked tab button
+  tabClicked.classList.add('operations__tab--active');
+
+  // remove the current content && Update the content as per tab dataset-tab
+  tabContent.forEach((content, i) => {
+    content.classList.remove('operations__content--active');
+    if (i == tabClicked.dataset.tab - 1) {
+      content.classList.add('operations__content--active');
+    }
+  });
+
+  // ( OR )
+
+  // if (tabClicked) {
+  //   tabButtons.forEach(ele => ele.classList.remove('operations__tab--active'));
+
+  //   tabClicked.classList.add('operations__tab--active');
+  // }
+});
+
+
+
+
+
+
+
+# Menu fade animation
+
+
+opposite of mouseover  ---> mouseout   ---> over and out
+opposite of mouseenter  ---> mouseleave    ---> enter and leave
+
+
+mouseover and mouseenter are kind of similar but the only difference is mouseenter does not bubble, so when you want to bubble or the thing appliend on parent should be bubble/applied/used by child elements too then use mouseover
+
+
+to pass an argument in the event handler :
+const handleHovers = (e,opacity) =>{
   
+  //  when using bind method
+  console.log(this);   ---->  0.5 when hover else 1
+
+  if( e.target.classlist.contains('nav__link') ){
+    const link = e.target;
+    const sibling = link.closest('.nav').querySelectorAll('.nav__links');
+    const logo = link.closest('.nav').querySelector('img');
+     
+     siblings.forEach(ele => {
+            if(ele !==link) ele.style.opacity = opacity;
+        });
+    logo.style..opacity = opacity;
+   }
+}
+
+///// Approach 1 to pass arguments in the callbacks
+nav.AddEventListener('mouseover', function(e)=>{
+   handleHovers(e,0.5);
+})
+
+nav.AddEventListener('mouseout', function,(e)=>{
+   handleHovers(e,1); 
+})
+
+
+///// Approach 2 using bind
+nav.AddEventListener('mouseover', handlerhovers.bind(0.5) )
+
+nav.AddEventListener('mouseout', handlerhovers.bind(1))  
+// Here bind will return a new function and this will now be the value passed i.e 0.5 and 1
+
+
+
+
+
+
+
+
+
+
+
+#Sticky navigation : after reaching to a certain section or height, make the nav sticky
+
+// Way 1 to make the nav sticky after certain point
+// -----------using scroll event handler------------------
+
+window.addEventListener('scroll', () => {
+
+// console.log(window.scrollY);  // this will give us how much you have scrolled!!
+// to make the navbar sticky when once scrolled to some section
+// We want distance from top page to that section and we can get it by using getBoundingClientRect(), it gives us lots of details like how far that element is from the page top,bottom,left and right, height and width and other details too.
+
+const distanceFromTop__section1 = section1.getBoundingClientRect().top;
+const amountOfScroll = window.scrollY;
+
+if (amountOfScroll > distanceFromTop__section1) {
+nav.classList.add('sticky');
+} else {
+nav.classList.remove('sticky');
+}
+});
+
+
+
+// Way 2
+// using web intersection Observer API
+
+const section1 = document.querySelector('#section1');
+
+//Step 1 :  so to use the intersection observer API we need to start by creating a new intersection observer and inside that we have to pass in a callback function and an object of options
+const observer = new IntersectionObserver();  
+
+// Step 2 : so now we have to use this observer to basically observe a certain target. So observer and then the method we call on that is observe and then the target element inside the method
+observer.observe(section1);
+
+// Step 3 : let create the options that we will put into the intersectionObserver(). make a variable that will store options inside the object for that intersectionObserver()
+----here the object needs first a root property and this root is the element that the target is intersecting. let's go with null value of this property.  then we will be able to observe our target element intersecting the entire viewport. so basically the entire rectangle screen not the whole page but whateveer you can see in one glance or the current portion of the page. 
+---- second, we need to define a threshold, that is basically the percentage of intersection at which the observer callback will be called so let set that to 10% i.e is 0.1
+---- we can have multiple thresholds, so here we can have an array like threshold : [.1 , .5 ,. 8] 
+---- 0 means callback will be called everytime whenever our target element moves completely out of the view and also as soon it enters the view 
+----1 means callback will only be called when 100% of thee target is actually visible in the viewport
+
+
+const observerObject = {
+ root : null,
+ threshold : 0.1
+}
+
+
+// Step 4 : let create the callback that we will put into the intersectionObserver(). make a variable that will store callbackfunction for that intersectionObserver()
+-----So this callback function will be called each time that the observed element so our target element i.e section1 is intersecting the root element at the threshold that we defined
+-----So in the current example, whenever the section1  is intersecting the viewport at 10% so the viewport because that's the root and at 10% because that's the threshold. So whenever that happens, then this function here will be called no matter if we are scrolling up or down
+-----And this function will get called with two arguments so we can specify them here and that's the entries and observer i.e new Intersection one
+-----Entries are basically an object having only one key value pair and inside the first  key  contains a lot of important stuffs like boundingClientRect,intersectionRect,target etc 
+-----So let take that out using ForEach and console the entry
+---- now what actually happening is if i will start scrolling after some scroll we will get over first entry which appeared here because our target element came into the viewport, it can be down or up side of the viewport , if the target element is visible , the callback will triggered and you can see the property whether it's intersecting or not i.e isIntersecting : true/false
+
+-----if the threshold amount of target element is intersected  to the viewport then only isIntersecting:true, else false
+-----so to make our nav sticky we have to use the target element to a header so when header is out of the view we will make the nav sticky 
+const observerCallback = function(entries,observer){
+   entries.forEach(entry=>{
+        console.log(entry) 
+   })    
+}
+
+
+
+
+// Step 5 : put the callback function and the object that has some options/attributes inside the IntersectionObserver()
+const observer = new IntersectionObserver( observerCallback , observerObject );   
+
+OverAll Code for sticky navbar apporach using intersection observer API :
+
+const observerCallback = function (entries, observer) {
+
+  entries.forEach(entry => {
+
+    if (entry.isIntersecting) {
+      nav.classList.remove('sticky');
+    }
+     else {
+      nav.classList.add('sticky');
+    }
+
+  });
+};
+
+const heightX = nav.getBoundingClientRect().height;
+
+const observerObject = {
+  root: null,
+  threshold: 0,
+  rootMargin: `-${heightX}px`,
+};
+const observer = new IntersectionObserver(observerCallback, observerObject);
+observer.observe(header);
+
+
+  
+
+
 
 
 
