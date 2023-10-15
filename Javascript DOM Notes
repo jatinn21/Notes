@@ -504,3 +504,96 @@ observer.observe(header);
 
 
 
+
+
+------------------------------------------------------------------------------------------------------------------------
+# To reveal element only at scrolling 
+
+make a class : 
+scroll--hidden{
+  opacity : 0;
+  transform :  translateY( 8rem );     
+}
+
+now collect all sections that will get the effect
+const allSections = document.querySelectorAll('.section');
+
+Create an instance of intersectionObserver
+const sectionObserver = new IntersectionObserver( sectionCallback, sectionObject );
+
+Create the callback function that takes two things : entries  [array] and observer
+const sectionCallback = ( entries, observer  ) => {
+    const [ entry ] = entries;
+    if( !entry.isIntersecting ) return;
+   entry.target.classlist.remove(' section--hidden ');
+   observer.unobserve(entry.target)    // so that once the section is visible we don't want to observe it again 
+}
+
+create the object that will have two things : root and threshold ( percentage at which callback will be called )
+const sectionObject = {
+ root : null ,
+ threshold : 0.15
+}
+
+this all will goes to all the sections that will comes inside the viewport and for that we will observe each and every element 
+allSections.forEach( section =>
+  {
+      section.classlist.add( 'section--hidden' );
+      sectionObserver.observe( section );
+   }
+ )
+
+
+
+
+
+
+
+#Lazy image effect using intersection observer
+
+make a class : 
+.lazy-img{
+  filter: blur(20px);
+}
+
+now collect all Images that has the class "data-src" beacuse those are the one who will get this lazy effect
+const allLazyImages = document.querySelectorAll( ' img[data-src] ' );
+
+
+Create an instance of intersectionObserver
+const lazyImageObserver = new IntersectionObserver(
+  lazyImageCallback,
+  lazyImageObject
+);
+
+
+Create an Object
+const lazyImageObject = {
+  root: null,
+  threshold: 0,
+};
+
+
+Create an callback function
+const lazyImageCallback = (entries, observer) => {
+  const [entry] = entries;
+  if (!entry.isIntersecting) return;
+  // this will help in inhancing the performance of the website as first we will show low resolution img on blur and then change it to high without blur
+  entry.target.src = entry.target.dataset.src;
+
+
+// if we directly remove the lazy-img class then it will be so fast that it won't give an good effect so let the process be loaded and then we will make 1 second delay
+  entry.target.addEventListener(' load ', () => {
+    setTimeout(() => {
+      entry.target.classList.remove('lazy-img');
+    }, 1000);
+  });
+};
+
+observe all lazy images 
+allLazyImages.forEach(lazyImg => lazyImageObserver.observe(lazyImg));
+
+
+
+
+
