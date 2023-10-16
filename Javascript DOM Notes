@@ -597,3 +597,95 @@ allLazyImages.forEach(lazyImg => lazyImageObserver.observe(lazyImg));
 
 
 
+
+
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+#Slider
+
+Step 1 : target all the slides, content inside the slides are completely unrelevant
+
+Step 2 :  every slide should be on top of each other inside the slider
+
+Step 3 : every slide will now get some precentage to be transformed : translate 
+0%  100%   200%   300%  ....
+slides.forEach( ( slide, index ) => slide.style.transform = ` translateX( $ { 100 * index }% ) `  ); 
+
+Step 4  : once every slide is next to each other, target the buttons, & create a currentSlide variable = 0 ; maxSlide = slides.length 
+Current slide will have 0% to be shown on the slider
+0%  100%  200%  300%  (Initial stage) : currentSlide : 1
+-100%  0%  100%  200%  (next stage)  : currentSlide : 2
+-200%  -100%  0%  100%  (next stage) : currentSlide : 3
+
+const nextSlide = function ( ) {
+   if(currentSlide === maxSlide -1 ){
+      currentSlide = 0;
+   } else {
+   currentSlide++;
+   }
+  goToSlide(currentSlide); 
+}
+
+const goToSlide = function (slide ) {
+   slides.forEach( ( s ,index ) => s.style.transform = ` translateX( $ { 100 * ( index - slide  ) }% ) ` );
+}
+
+
+const prevSlide = function ( ) {
+   if(currentSlide === 0  ){
+      currentSlide = maxSlide - 1;
+   } else {
+   currentSlide--;
+   }
+  goToSlide(currentSlide);  
+}
+
+
+btnRight.addEventListener( 'click' , nextSlide ); 
+btnLeft.addEventListener( 'click' , prevSlide ); 
+
+
+
+Step 5 : till now our basic slider is ready, but now we want to change the slider using leftkey and rightkey of your keyboard
+to use the keyboard events we have to target the document 
+document.addEventListener( 'keydown' , function(event){
+     if( e.key === ''ArrowLeft" ) { 
+         prevSlide(); 
+      }
+    
+    e.key==="ArrowRight" && nextSlide();
+} ) 
+
+
+Step 6 :  done with the above task, now let's add the damn dots, so target that as we have already a div called dots
+now we have to create button elements as per the number of slides in te slider and we know that we can create an element an dput inside any other element using insertAdjacentHTML
+_ is throwaway variable
+const dots = document.querySelector(' .dots ');
+const createDots = function(){
+   slides.forEach( ( _ ,index) => {
+       dots.insertAdjacentHTML( 'beforeend', `<button class="dots__dot" data-slide=${ i }></button>` )
+   }) 
+}
+
+Step 7 : done with the function than you have to call the function
+createDots();
+
+Step 8 : Dots are there now, now let's make them functional using event delegation using common parent rather than passing the same function to all dots and make the color white of the current dot
+
+dots.addEventListener( 'click' ,function(e){
+    if(e.target.dataset.slide){
+          goToCurrentSlide(e.target.dataset.slide)
+     }
+  } )
+
+ const activateDots = function(slide){
+     document.querySelectorAll('.dots__dot').forEach((ele,i)=>{ 
+      ele.classlist.remove('dots__dot--active');
+     })
+    document.querySelector('button[data-slide="4"]').classlist.add('dots__dot--active');
+}
+
+
