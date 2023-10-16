@@ -1,0 +1,47 @@
+----------------------------------------------------------------------------------------------------------------
+#Efficent script loading : Defer and Async
+
+there are different way of loading javascriot script in HTML
+Regular ( head & end of the body ) : <script src= "script.js" >
+Async    ( head ) : <script async src= "script.js" >
+defer    ( head )  : <script defer src= "script.js" >
+
+These attributes are gonna influes the way in which the Javascript file is fetched, which basically means downloaded and then executed.
+Regular : we have always used this way ,
+ either putting the script tag inside the  head or at the end of the body
+ is there any difference in that?
+ Ans : HELL YES
+ 
+Script In Head : 
+ When the user loads the page and receives the HTML, the HTMLcode will start to be parsed by the browser and parsing the HTML is basically the DOM tree from the HTML elements. Then at a certain point,it will find or a script tag, start to fetch the script and then execute it. now during all the time the HTML parsing will be stopped. So it will be waiting for the script to get fetched and executed. Only after that, the rest of the HTML can be parsed and at the end of that parsing, The DOM content loaded event will finally get fired.
+So we don't want our brower to be just sitting there doing nothing for sometime, because this can have a huge impact on the page perforamance. Plus in this case, the script will actually be executed before the DOM is ready. And so again that's not ideal. So never do this.
+
+Script in the end of the body :
+Here all the HTML is already parsed, when it finally reaches the script tag so in this situation: Parsing HTML --> Fetch script --> execute --> DomContentLoaded
+The html is parsed and when we reach to the bottom of the body we get the script and we fetch all the script and then we execute it.
+It's better than Head approach but it's not perfect than other ways because the script could have been downloaded before while the html was still being parsed.
+
+So what about Async attribute  in the head of the document :
+Here the difference is that scipt is loaded at the same time as the HTML is parsed. so in an asynchronous way , so that 's an advantage. However the HTML parsing still stops for the script execution. So the script is actually downloaded asynchronously but then it's executed right away in a synchronous way. and so the html code has to wait for being parsed. But it's still makes the page loading time shorter then regular script in head
+
+So what about defer attribute : 
+when deferring what happens is that the script is still loaded asynchronously but the execution of the script is deferred until the end of the HTML parsing. So in practice, loading time is similar to async attribute but the key difference is that would fefer the HTML parsing is never interrupted beacuse the script is only executed at the end. 
+
+We dont use asycn and defer in the end of the body script tag becuase it does not make sense.
+
+
+Summary : 
+
+end of the body  :  Script are fetched and executed after the HTML is completely parsed.
+async  in head  :  Script are fetched asynchronously and executed immediately.
+ NOTE : Ususally the DOMContentLoaded event waits for all scripts to execute, execpt for async scripts. So, DOMContentLoaded doesn't wait for an async script
+-- Scripts are not guaranteed to execute in order 
+defer in head  : Script are fetched asynchronously and executed after the HTML is completedly parsed
+ Notes : DOMContentLoaded event fires after defer script is executed
+-- Script are executed in order
+
+So all boils to one thing, defer is the best solution, use for your own scripts, and when order matters.
+
+Ao for no onwars we are going to use the script inside the head and using defer attribute as regular script in the end of the body takes 2ms , then defer in the head has took 1.5ms.
+
+<script  defer src = 'script.js'></script> 
