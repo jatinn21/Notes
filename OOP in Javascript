@@ -1,0 +1,464 @@
+OOP : 
+a programming paradigm ( style of code, "how" we write and organize code ) based on the concepts of objects
+
+we use object to model (describe) real-world or abstract features
+
+Objects may contain data(properties) and code ( methods). by using objects, we pack data and the corresponding behaivor into one block 
+
+In OOPS, Objects are self-contained piece/blocks of code
+
+OOP was developed with the goal of organizing code, to make it more flexible and easier to maintain (avoid "spaghetti code")
+
+
+Class : Like a blueprint from which we can create new objects
+Fictional class :
+User{
+  user
+  password
+  email
+  
+  login(password){
+     // login logic
+  }
+
+  sendMessage(str){
+     // Sending logic
+  }  
+}
+
+
+
+Now let's create an object using it : 
+
+new User('jatin')
+
+{
+  user = 'jatin'
+  password = 'abc123'
+  email = 'js@abc.com'
+
+   login(password){
+     // login logic
+  }
+
+  sendMessage(str){
+     // Sending logic
+  }  
+}
+
+
+Now we can create as many instances as we want : 
+------------------------------
+new User('ram')
+
+{
+  user = 'ram'
+  password = 'om_namah_shivay'
+  email = 'ram@sita.com'
+
+   login(password){
+     // login logic
+  }
+
+  sendMessage(str){
+     // Sending logic
+  }  
+}
+
+-------------------------------
+new User('dipu')
+
+{
+  user = 'dipu'
+  password = 'dipu8372'
+  email = 'dipu@abc.com'
+
+   login(password){
+     // login logic
+  }
+
+  sendMessage(str){
+     // Sending logic
+  }  
+}
+
+
+
+
+
+------------------------------------------------------------------------------
+4 fundamental principles of OOPS : (aeip)
+1. Abstaction
+2. Encapsulation
+3. Inheritance
+4. Polymorphism
+
+
+Abstraction : hidding details that are not necessary to the user. addEventListener we don't know how things goes behind the scenes? No. do we care? No We dont' really!
+Because the low level details of how exactly it works has been abstracted away from us, from the end user, we can simply use it, without knowing how it works BTS.
+After this bend with the next fundamental --> encapsultaion
+
+
+Encapsulation : Keeping properties and methods private inside the class, so they are not accessible from outside the class. Some methods can be exposed as a public interface (API)
+We can either defined the access specifiers like private, public ,protected
+not actually JS Code
+User{
+   user
+   private password
+   private email
+  
+   login(word){
+      this.password === word
+   }
+
+   comment(text){
+      this.checkSPAM(text)
+   }
+   private checkSPAM(text){
+      // Verify logic
+   }
+}
+
+
+
+
+Inheritance : Let say we have two classes : User & Administrator
+ 
+User{
+  user 
+  password 
+  email 
+
+   login(password){
+     // login logic
+  }
+
+  sendMessage(str){
+     // Sending logic
+  }  
+}
+
+
+Admin{
+  user 
+  password 
+  email
+  permission 
+
+   login(password){
+     // login logic
+  }
+
+  sendMessage(str){
+     // Sending logic
+  }  
+  
+  deleteUser(str){
+     // Deleting logic
+  }  
+  
+}
+
+
+Now if we see, we will notice that they both have lot in common like user,password,email, login,sendMessage and if we think admin is also a user so admin also needs a password and an email and he also needs to login.
+So if we design our classes like this, then we will end up with lot of duplicate code and we already know that's bad. That's where inheritance comes into play.
+In OOPs when we have two closely related classes we can have one class inherit from the other. So we have one Parent Class and one Child Class	so ChildClass extends parentClass
+
+making all properties and methods of a certain class available to a child class, forming a hierarchical relationship between classes. This allows us to reuse common logic and to model real-world relationship
+
+The different thing are : permission data, deleteUser Method then can be added specifically in the child class (admin)
+
+
+
+
+
+
+Polymorphism
+
+A child class can overwrite a method it inherited from a parent class.
+
+//Parent Class
+User{
+  user 
+  password 
+  email 
+
+   login(password){
+     // login logic
+  }
+
+  sendMessage(str){
+     // Sending logic
+  }  
+}
+
+
+// Child Class : 1
+Admin{
+  user 
+  password 
+  email
+  permission 
+
+   login(password,key){
+     // Different Logic
+  }
+  
+  deleteUser(str){
+     // Deleting logic
+  }  
+  
+}
+
+
+
+// Child Class : 2
+Author{
+  user 
+  password 
+  email
+  post
+
+   login(password){
+     // different logic
+  }
+  
+  writePost(){
+     // Writing logic
+  }  
+  
+}
+
+
+both Admin and Author has many things in common as an user so we have created an user class as an parent which has two child admin and author. We know that they will inherit each and every properties and methods from the user but as they have different ways of login , so we will overwrite the inherited login method by writing our own login method.
+
+
+
+
+---------------------------------------------------------------------------
+
+In Javascript, there is something called prototypes and all objects in Javascript are linked to a certain prototype object.
+So we say each object has a prototype and now here comes the magic.
+Prototypes object contains methods and properties that all the objects that are linked to that prototype can access and use.
+This behavior is ususally called prototypal inheritance, means that all objects linked to that prototype can access it properties and methods(behavior)
+
+
+for example : Array in Js is linked to the Array.prototype and this prototype has all methods like map, filter, find, reduce....
+and therefore Array as been a part of Array.prototype can use it
+ 
+
+
+Q. how do we actually create prototypes? and how do we link objects to prototypes? how can we create new Objects, without having classes? 
+
+1. Constructor functions
+-> Technique to create objects from a function
+-> this is how built-in objects like Array, Maps or Sets are actually implemented.
+
+2.ES6 Classes
+-> Modern alternative to constructor function syntax
+-> Works exactly the same as constructor function
+
+3. Object.create()
+-> easiest and most straight forward
+
+
+
+----------------------------------------------------------------------------------
+Contructor Function
+
+It's actually completely normal function. The only difference between a regular function and this function is that we call contructor function with the new operator.
+
+Practical : 
+Let's create a constructor function for a person and that will produce an object. Remember that here the naming convention is always capitalize and you can use function decalaration or expression but you can't go with arrow function because it does n't have their own this keyword
+
+const Person = function(firstName,birthYear){
+  console.log(this);
+}
+
+new Person('Jatin Sharma',2001);
+
+// 1. New {} empty object is created
+// 2. function is called, this = {} that newly empty object that we have created
+// 3. {} linked to prototype
+// 4. function automatically return {}
+
+So right now we will get an empty Person Object : Person {}
+
+Now we understand the logic so let's make an object :
+
+const Person = function(fullName,BirthYear){
+   console.log(this);
+   this.fullName = fullName;
+   this.birthYear = birthYear;
+}
+
+const jatin = new Person('Jatin Sharma',2001);
+
+console.log(jatin) : Person{fullName:'Jatin Sharma',BirthYear:2001}
+
+// What happens here is : 
+as we have used new keyword so an empty object will be created of Person class and this will target the function and it will be called, and inside the function we have made two properties - fullName & birthYear. and in the end that function automatically returns that object that we have created.
+and this will returned to our variable "jatin"
+Now we can create as many objects as we want as we have already set the class blueprint that will make only fullname and birthyear
+
+const ramji = new Person('Ram chandra',1500)
+const sitaji = new Person('janki',1500)
+
+an Object created from a clas  is called instance now we haven't technically created a class because Javascript doesn't really have classes however we did create an object from a constructor function. 
+so we can say that jatin, ramji and sitaji are instance of Person and the properties of the objects will be called as instance properties
+
+We can check whether the object is an instance of a xyz class or not: 
+console.log(jatin instanceof Person)  --> true
+
+const jay = "Jay";
+console.log(jay instanceof Person)  --> false
+
+
+Done with Properties, What about methods?
+you can done with same approach : 
+
+
+const Person = function(fullName,BirthYear){
+   console.log(this);
+   this.fullName = fullName;
+   this.birthYear = birthYear;
+   
+   // this is a bad practice
+   this.calcage = function(){
+       console.log( 2037-this.birthYear );
+   }
+
+NOTE :  never create a method in constructor function because imagine we creating 100s of objects so all will get the same method and this will create a lot of duplications. so to solve this problem we are going to use prototype & prototypes inheritance
+
+
+
+----------------------------------------------------------------------------------
+Prototypes
+How does all this prototype and prototype inheritance work?
+
+To know everything about the constructor function : 
+className.prototype // this is an object 
+// ƒ (fullName, birthYear)
+// [[Prototype]]
+// Object
+
+now you can provide the method to that prototype
+
+Person.prototype.calcAge = function(){
+  console.log(2023-this.birthYear)
+}
+
+jatin.calcAge() //this is called prototype inheritance as we inherit the calcAge of Person prototype into jatin object
+
+Any object always has access to the methods and properties from it's prototype. And the prototype of jatin, ramji and sitaji is Person.prototype
+
+to know what methods and properties are there in an object : object.__proto__
+console.log(jatin.__proto__);
+o/P = {calcAge:f() , constructor : f(fullName,birthYear)}
+as calcAge was inherited and fullName and birthYear properties came from the constructor
+
+all thing that are written in Object.prototype.xyz are never written in constructor section in console
+
+Person.prototype.species = 'Homo sapiens';
+
+
+# to check whether the object has it own property or now (or) it's not written in constructor function
+
+Person.prototype.species = "Homo Sapiens";
+console.log(jatin.hasOwnProperty("fullName"));  --> true
+console.log(jatin.hasOwnProperty("birthYear"));  --> true
+console.log(jatin.hasOwnProperty("species"));   ---> false
+
+
+
+
+
+
+
+
+
+
+#now to know the prototype of the object of the class we use : __proto__ :
+
+console.log(jatin.__proto__) 
+O/P : {calcAge:f,constructor:f}
+▶calcAge:f()
+  species:"Homo Sapiens"
+▶constructor:f(fullName,birthYear)
+
+
+
+#now to know the object prototype : the top of the prototype chain
+console.log(jatin.__proto__.__proto__)
+
+O/P : {constructor:f, __defineGetter__:f, hasOwnProperty:f, __lookupGetter__:f}
+▶constructor:f Object()
+▶hasOwnProperty:f hasOwnProperty()
+▶isPrototypeof:f isPrototypeof()
+...
+
+
+#now let's make an array
+const arr = [12,44,51,62,24,46,75];
+console.log(arr.__proto__);
+
+Output :[.......]
+▶at:f at(),concat:f concat(), constructor:f Array(),copyWithin:f copyWithin(), entries : f entries(), every: f every(), map : f map() ...
+
+
+
+# to create a new array Method that will give unique values
+let arr = [2,4,2,4,5,3,5];
+Array.prototype.unique = function(){
+ return [...new Set(this)];
+}
+
+console.log(arr.unique) =>  [2,4,5,3]
+
+
+
+
+
+
+
+
+
+-------------------------------------------------------------------------------------------------------------------
+Live Example
+
+const Car = function(make,speed){
+   this.make = make;
+   this.speed = speed;
+}
+
+const bmw = new Car('BMW',120);
+const mercedes = new Car('mercedes',150);
+
+Car.prototype.accelerate = function(){
+  this.speed += 10;
+  console.log(`${this.make} is running at the speed of ${this.speed} km/hr`);
+}
+
+Car.prototype.brake = function(){
+  this.speed -= 5;
+  console.log(`${this.make} is running at the speed of ${this.speed} km/hr`);
+}
+
+bmw.accelerate()
+bmw.accelerate()
+bmw.accelerate()
+bmw.brake()
+bmw.accelerate()
+
+O/P: 
+bmw is running at the speed of 130 km/hr
+bmw is running at the speed of 140 km/hr
+bmw is running at the speed of 135 km/hr
+bmw is running at the speed of 145 km/hr
+
+
+
+Done with constructor
+--------------------------------------------------------------------------------------------------------------------------
+
+
