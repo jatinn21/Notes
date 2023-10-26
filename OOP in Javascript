@@ -462,3 +462,187 @@ Done with constructor
 --------------------------------------------------------------------------------------------------------------------------
 
 
+ES6 Classes : do the same thing but using a nicer and more modern syntax
+
+instead of function write class
+
+we have class declaration :
+class PersonClass{
+   // logic...
+}
+
+
+We have class experation too but class declaration kinda look like class
+const PersonClass = class{
+   // logic...
+}
+
+
+here we have a constructor function and it is called whenever you create an object of the class using new
+
+class PersonClass{
+   constructor(fullName,birthYear){
+       this.fullName = fullName;
+       this.birthYear = birthYear;
+   }
+}
+
+const jessica = new PersonClass('Jessica Scott',1999);
+console.log(jessica)
+
+
+------------Done with properties-------------------
+
+Let's start with methods --- simply write them outside the constructor 
+
+class PersonClass{
+   constructor(fullName,birthYear){
+       this.fullName = fullName;
+       this.birthYear = birthYear;
+   }
+
+   calcAge(){
+       console.log(2023-this.birthYear)
+   }
+}
+
+
+all these methods that we write in the class outside the constructor will be on the prototype of the objects and not on the objects themselves.
+so it goes inside __proto__ and there you will see the calcAge
+
+
+Benefit of using ES6 is you don't have to mess with the prototype of the object as you can simply use constructor for properties, and make the methods outside the constructor
+
+you can also use prototype with this also:
+PersonClass.prototype.greet = function(){
+    console.log(`Hello ${this.fullName}`);
+}
+
+jessica.greet() --> hello jessica
+
+Or you can write inside the class but but but
+NOTE : don't use comma for separating the methods : 
+
+class PersonClass{
+   constructor(fullName,birthYear){
+       this.fullName = fullName;
+       this.birthYear = birthYear;
+   }
+
+   calcAge(){
+       console.log(2023-this.birthYear)
+   }
+
+   greet(){
+       console.log(`Hello ${this.fullName}`);
+   } 
+}
+
+
+
+IMPORTANT : classes are not hoisted even they are class declaration. so functional declarations, remember are hoisted which means we can use them before declaration but classes can't
+
+second is Classes are also first-class citizens, means we can pass them into functions and also returm them from functions as classes are just some special kind of functions behind the scenes 
+
+third : the body of the class is always executed in strict mode (or) classes are executed in strict mode
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------
+#Setters and Getters
+
+Every object in the Javascript can have setter and getter properties
+
+class jassica {
+   constructor(name,year){
+      this.name = name;
+      this.year = year;	
+   }
+
+   get age(){
+      return 2023-this.year;
+   }
+} 
+
+work as an property and not like a method
+jassica.age()   X
+jassica.age     ✔️
+
+
+
+class Animal {
+  constructor(name) {
+    this._name = name;
+  }
+
+  fly() {
+    console.log("you can fly");
+  }
+
+  get name() {
+    return this._name;
+  }
+
+  set name(updatedName) {
+    this._name = updatedName;
+  }
+}
+
+const dog = new Animal("Bruno");
+console.log(dog.name);    -----> Bruno
+dog.name = "BruYES";
+console.log(dog.name);    -----> BruYES
+
+
+
+---------------------------------------------------------
+#static methods
+to make any static method in class 
+add static keyword before the method name:
+
+class Example{
+   constructor(name){
+       this.name = name; 
+   }
+
+   static hey(){
+       console.log('hello sir');
+   }
+}
+
+
+Static methods are used to implement functions that belong to a class as a whole and not to any particular object
+
+ 
+
+class Animal{
+   constructor(name){
+     this.name = Animal.capitalize(name);
+   }
+   walk(){
+     alert(`Animal ${this.name} is walking!!`);
+   }
+
+   static capitalize(name){
+     return name.charAt[0].toUpperCase() + name.substr(1);   
+   }
+}
+
+const dog = new Animal('bruno');
+const cat = new Animal('Jackie');
+dog.walk()  --> Animal Bruno is walking!!
+cat.walk()  --> Animal Jackie is walking!!
+
+
+Capitalize is only linked with the class and not with class object
+like 
+console.log(Animal.capitalize("bruno"));  --> Bruno
+console.log(dog.capitalize("bruno")); -------> Error TypeError not a function
