@@ -646,3 +646,178 @@ Capitalize is only linked with the class and not with class object
 like 
 console.log(Animal.capitalize("bruno"));  --> Bruno
 console.log(dog.capitalize("bruno")); -------> Error TypeError not a function
+
+
+
+
+
+
+----------------------------------------------------------------------------------------------------------------------------------------
+Inheritance between Classes : Constructor function
+----------------------------------------------------------------------------------------------------------------------------------------
+
+const Personclass = function (firstName, birthYear) {
+  this.firstName = firstName;
+  this.birthYear = birthYear;
+};
+
+Personclass.prototype.calcAge = function () {
+  console.log(`Age of ${this.firstName} : ${2023 - this.birthYear}`);
+};
+
+const Studentclass = function (firstName, birthYear, course) {
+  // this.firstName = firstName;
+  // this.birthYear = birthYear;
+  Personclass.call(this, firstName, birthYear); // hack to use different class inside different class, call() takes first argument of the object you want to assign the this keyword in our case it's Personclass and then we can pass the values as an argument and (this = Studentclass)
+  this.course = course;
+};
+
+Studentclass.prototype.introduce = function () {
+  console.log(`Hello, my name is ${this.firstName} and I study ${this.course}`);
+};
+
+const j3 = new Studentclass("jatin", 2001, "Computer Science");
+// console.log(j3);
+j3.introduce();
+
+
+
+//To use the prototype of Class Personclass inside the object of the class Studentclass
+Note : link both the prototypes and then it will assign an empty prototypes in both then you add all the students prototype because if you do it before then they will get overwrite or you can't use them. So first link, then it will create empty prototypes and then assign the exteneded methods on the child and now you can good to use the methods of parent into the class  
+-----------------
+
+let refactor the code so that we can use the calcAge method of parent class i.e Personclass in child class i.e Studentclass
+--------
+Note: This is a mistake, assigning a method to the child class prototype before and then reassigning it to the Parent class prototype, here all the prototype of parent will be taken by child but it will remove this introduce method of child too.
+--------
+Studentclass.prototype.introduce = function () {
+  console.log(`Hello, my name is ${this.firstName} and I study ${this.course}`);
+};
+
+Studentclass.prototype = Personclass.prototype;
+
+
+----------
+Complete Right Code
+----------
+
+const Person = function(name,year){
+   this.name=name;
+   this.year=year;
+}
+
+Person.prototype.calcAge = function(){
+   console.log(`Years old : ${2023-this.year}`);
+}
+
+const Student = function(name,year,course){
+   Person.call(this,name,year);
+   this.course = course;
+}
+
+Student.prototype = Person.prototype; 
+(OR)
+Student.prototype = Object.create(Person.prototype);
+
+Student.prototype.introduce = function(){
+   console.log(`Hello, my name is ${this.name} and I study ${this.course}`);
+} 
+
+const jatin = new Student('jatin',2001,'Computer Science');
+jatin.introduce();
+jatin.calcAge
+
+
+//////////Done with using method of parent in child class, by constuctor function
+
+
+
+
+----------------------------------------------------------------------------------------------------------------------------------------
+#Using method of parent in child class, by now using ES6 classes
+----------------------------------------------------------------------------------------------------------------------------------------
+
+class Person{
+   constructor(name,year){ 
+	this.name = name;
+  	this.year = year;
+   }
+
+   calcAge(){
+ 	console.log(`Years old : ${2023-this.year}`);	
+   }
+
+   static greet(){
+	console.log(`good morning ${this.name}`)
+   }
+}
+
+const p = new Person('paresh',2000);
+Person.greet() --> good morning Person // because this = Person and this.name = Person, its a property of this and not the property of it Person Class. os if this.name inside the constructor is changed to names it will still give us the "good morning Person";
+
+
+Note : to implement inheritance between ES6 classes, we only need two ingredients : super function and extends keyword
+So to make the student class inherit from the person class, all we need to do is to say extends	:
+
+class Student extends <ParentClass> {
+
+}
+
+so this will link the prototypes of both BTS without us even having to think about that : 
+Note :  super(arg1,arg2..)in child class  = parent constructor have same arguments in both child and parent class. and super should be written first because this call to the super function is responsible for creating the "this" keyword in this subclass as without it you won't be able to use this keyword inside the subclass and can't do "course = this.course" 
+
+
+class Student extends Person{
+	constructor(name,year,course){  
+  		//you don't have to use <Parent>.call(this,name,year); 
+		// as we have super function for that as super is basically the constructor function of the parent class
+		super(name,year)  
+
+ 	}
+}
+
+
+----------
+code
+----------
+class P2 {
+  constructor(name, year) {
+    this.name = name;
+    this.year = year;
+  }
+
+  calcAge() {
+    console.log(`Years old : ${2023 - this.year}`);
+  }
+
+  static greet() {
+    console.log(`good morning ${this.name}`);
+  }
+}
+
+// const b = new P2("badal", 2000);
+class S2 extends P2 {
+  constructor(name, year, course) {
+    super(name, year);
+    this.course = course;
+    console.log(this.course);
+  }
+
+  introduce() {
+    console.log(`Hello, my name is ${this.name} and I study ${this.course}`);
+  }
+}
+
+const s = new S2("s", 1998, "CA");
+s.introduce();   ✔️
+S2.greet();      ✔️
+s.calcAge();	 ✔️
+
+
+// You can override the methods too
+class S2 extends P2 {
+ ....
+ calcAge(){
+	console.log('We have override the calcAge of Parent!!');
+ }
+}
