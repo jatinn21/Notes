@@ -821,3 +821,214 @@ class S2 extends P2 {
 	console.log('We have override the calcAge of Parent!!');
  }
 }
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------------------------------------------
+inheritance in classes using Object.create
+const PersonProto = {
+ calcAge(){
+   console.log(2023-this.year);
+ }
+ init(firstName,year){
+   this.firstName = firstname;
+   this.year = year;
+ }
+}
+
+const StudentProto = Object.create(PersonProto);
+
+StudentProto.init = function(firstName,year,course){
+   PersonProto.init.call(this,firstName,year);
+   this.course = course;
+}
+
+StudentProto.introduce = function(){
+   console.log(`hello my name is ${this.firstName} and i study ${this.course}`)	
+}
+
+const jay = Object.create(StudentProto);
+jay.init('Jay',2000,'MCA');
+jay.introduce();
+jay.calcAge();
+
+
+
+means PersonProto --> Prototype(calcAge:func())
+,& in StudentProto --> Prototype(proto : PersonProto)  --> it inherit from the parent i.e
+PersonProto
+, jay ----> Object[jay] proto: StudentProto so now jay is able to use all the properties and methods of personProto and StudentProto
+
+
+
+
+
+
+
+-----------------------------------------------------------------------------------
+#Encapsulation and Data Privacy
+
+class Account{
+ constructor(owner,currency,pin){
+	this.owner = owner;
+	this.currency = currency;
+	this.pin = pin;
+	this.movements = [];
+	this.locale = navigator.language;
+	console.log(`Thanks for opening an account, ${this.owner}`);
+ }
+
+ //Public Interface
+ deposit(val){
+	this.movements.push(val);
+ }
+
+ withdrawal(val){
+ 	this.deposit(-val);
+ }
+
+ 
+ approveLoan(val){
+	return true;
+ }
+
+ requestLoan(val){
+	if(this.approveLoan(val)){
+		this.deposit(val);
+		console.log('Loan Approved');
+  	}
+ }
+}
+
+
+
+const acc1 = new Account('jonas','EUR',1111);
+acc1.deposit(1500);
+acc1.withdraw(400);
+
+//Can use things that user shouldn't like
+acc1.requestLoan(1000);
+acc1.approveLoan(1000);
+
+console.log(acc1.pin);
+
+
+
+
+--> In encapsulation, we keep some properties and methods private inside the class so that they are not accessible from outside of the class. Then the rest of the methods are basically exposed as an public interface, which we can also call API.
+
+Reason why we need encapsulation :
+- to prevent code from outside of a class to accidentally manipulate our data inside the class
+- changes in internal methods won't effect the outside code
+because external code doesn't rely on these private methods so our code doesn't break if we do internal changes
+
+
+//Private convention
+To make something private inside a class, use a convention where the name of the property should start with underscore'_' like movements should be _movements or pin should be _pin. Same goes with the methods, approveLoan : _approveLoan
+
+you can still use it outside : acc1._movements.push(400);
+
+But the important thing is you and your team will know that this property is not supposed to be touched outside of the class
+
+
+
+
+#We have public, private fields(properties) and methods :
+first let see the public fields means all the properties that should be used in every instances(object) like movements, or locale : don't write anything like write it as a variable but without using const,let or var;
+
+and in Private lets make movements, and pin field private, here we have to start the name with # and not _
+If we use the #movements outside the class we will get an error of syntax error of using private field '#movements', but if you want that user can see all his movements but can't change it , you can make an API for that like getMovements() 
+
+Making pin private is different from movements as movements was empty and we are not taking its value form the user and setting it using constructor, but here we are taking and setting the value using constructor!!! -- makin pin to #pin; and leave it empty
+
+
+Public methods : we are already using it
+
+Private Methods : the syntax is just same as private fields using #. Let's make approveLoan method as private and change the name everywhere
+
+Static Methods : also
+
+-------
+example
+-------
+
+class Account{
+	//Public fields;
+	locale = navigator.language;
+	_movements = [];  // _ because of the convention it should not be accessed outside but be inside every instance
+
+
+	//Private fields;
+	#movements = [];  // change at every place 
+	#pin;
+	
+	constuctor(owner,currency,pin){
+	this.owner = owner;
+	this.currency = currency;
+	this.#pin = pin;
+	}
+	
+	//Exposing Movements method
+	getMovements(){
+		return this.#movements;
+	}
+
+	//Private approveLoan method
+	#approveLoan(val){
+		return true;
+	}
+
+}
+
+
+
+console.log(acc1.#movements); ----> error 
+console.log(acc1.#pin); ----> error 
+acc1.deposit(400);
+acc1.deposit(1500);
+acc1.withdraw(200);
+console.log(acc1.getMovements()) --> [400,1500,-200]
+console.log(acc1.#approveLoan(5000)) ---> Error
+
+
+
+
+// We can also make chaining just like array : filter().map().reduce() here also
+lets say after deposit we return the account
+like : deposit(val){
+		this.#movements.push(val);
+		return this;
+	}
+	
+	requestLoan(val){
+		if(this.approveLoan(val)){
+			this.deposit(val);
+			console.log('Loan Approved');
+			return this.
+		}
+	}
+ 
+
+Now we can do chaining : 
+acc1.deposit(300).deposit(500).withdraw(35).requestLoan(25000).withdraw(4000); //done [400,1500,-200,300,500,-35,25000,-4000]
+
+
+
+
+
+
+
+
+
+
+
+
+Last 2 lectures of OOPs section are not written here so refer 226 and 227
