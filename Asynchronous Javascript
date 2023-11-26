@@ -1,0 +1,106 @@
+The Goal of Asynchronous Js is to basically deal with long-running tasks, that run in the background. 
+The most common use case is to fetch data from remote servers, in so-called AJAX Calls where AJAX: Asynchronous Javascript and XML
+We are gonna learn about :
+i. Promises
+ii. fetch function
+iii. async await
+iv. Error handling
+
+---------------------------------------------------------------------------------------------------------------------------------
+About and Use of AJ - Asynchronous Javascript
+----------------------------------------------------------------------------------------------------------------------------------
+Most of the code that we have written so far is synchronous code, which means the code is executed line by line.
+Each line of code waits for the previous line to finish;
+
+Problem: Long-running operations block code execution;
+
+Remember: call stack, Web APIs, and callback queue.
+
+Best Example: alert()
+
+Best Code : 
+const p = document.querySelector('.p');
+p.textContent = 'My Name is Jatin';
+alert('Text Set!');
+p.style.color = 'red';
+
+Result :
+Here things like a change of text and color happen after the alert 'ok' click event happens. This means blocking of the code can be seen 
+
+Synchonous is great when you want things to go in order but imagine when execution has to wait for like 5 seconds then that would be terrible, Right?
+Meanwhile, nothing on the page will work during these 5 seconds, and there where asynchronous code coming into play.
+
+Code :
+const p = document.querySelector('.p');
+setTimeout(function(){
+    p.textContent = 'Hello World';
+},5000)
+p.style.color = 'red';
+
+Result :
+here there is nothing synchronous, so no blocking, first the color of the element will be changed, and then the content after 5 sec.
+
+Another Code Example :
+// setting Image with load event listener 
+// src in image makes our code async here
+const img = document.querySelector('.dog');
+img.src = 'dog.jpg';
+img.addEventListener('load',function(){
+    img.classlist.add('fadeIn');
+});
+p.style.width = '400px';
+
+Note: addEventListener does not automatically make the code asynchronous!! so do callback functions!!
+
+
+
+
+
+
+
+# AJAX
+It stands for Asynchronous Javascript and XML, allowing us to communicate with remote web servers in an asynchronous way. With AJAX calls, we can request data from web servers dynamically.
+Example :
+Create an application that will show Country info by taking the name from the user.
+Here the client will send the request(country info by sending the country name) and the server will send the response.
+We handle all these responses using AJAX. We use the API concept for fetching the data of the country
+
+#API
+Application Programming Interface, to a very high level of abstraction we can define it as a piece of software that can be used by another piece of software, in order to allow applications to talk to each other. 
+There are many types of APIs in web development like DOMAPI, and Geolocation API.
+Also, you can always implement a small and simple API in a class, where we make some methods available as a public interface. So again object made from a class can be seen as a self-contained encapsulated piece of software that other pieces of software can interact with. 
+
+Online API : 
+An application running on a server, that receives requests for data, and sends data back as a response. we call that 'API'.
+We have APIs for everything: Weather data, data about countries, Flight data, currency conversion data, APIs for sending email or SMS, Google Maps, and other millions of possibilities with APIs.
+
+
+#API data formats :
+--> AJAX: Asynchronous Javascript and XML, where X stands for XML and XML is a data format that is widely used to transmit data on the web. However, no API uses XML data anymore but as this AJAX word starts gaining popularity even knowing that XML is not used anymore.
+So instead, Most APIs these days use the JSON data format, very popular today, as it's a Javascript object but converted into a string and that's why it's easy to send on the web and use in Javascript once the data arrives.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
