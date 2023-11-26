@@ -83,8 +83,81 @@ So instead, Most APIs these days use the JSON data format, very popular today, a
 
 
 
+//most old-school way of doing AJAX calls
+
+BTS : 
+we got a repo on Git Hub named 'public-apis' and there are three things mentioned about various types of APIs i.e. Authorizations, CORS, and HTTPS.
+Remember: Using 3rd party API, we need CORS, Cross-origin-resource-sharing.
+Best API for countries info: restcountries.com, endpoints mai jaake 
+
+#Our First AJAX call: XMLHttpRequest 
+AJAX call Code : 
+const request = new XMLHttpRequest();
+request.open('GET','https://restcountries.com/v2/name/india');
+request.send();   //This will take time to fetch data so once it is over we will listen to it using the event listener
+console.log(request.responseText);
+request.addEventListener('load',function(){
+    console.log(this.responseText); // this === request;
+});
+
+Remember: We get a string in the result because what we have is JSON, so we have to convert it into a good-looking and more readable output
+const output_Data = JSON.parse(this.responseText);   --> Now we have an Array of one Object as we have only one country info 
+
+We can then make an HTML element that will change the info as per the county info and can insert it in the DOM using insertAdjacentHTML(position, HTML)
+
+The best way is to make a function that will take the country name as an argument and will make the AJAX calls, make the element, and insert it in the DOM. Wowwwwwww!
 
 
+Final Code :
+function getCountryData(countryName){
+  const request = new XMLHttpRequest();
+  request.open('GET',`https://restcountries.com/v3.1/name/${countryName}`);
+  request.send();
+  request.addEventListener('load',function(){
+        const data = JSON.parse(this.responseText);
+        const html = `<div>
+                          <p>
+                            <img src=`data.flag`>
+                          <p>
+                          <p>  
+                            <span>
+                                Country Name :
+                            </span>  
+                            <span>
+                                ${data.name}
+                            </span>
+                          </p>
+                          <p>
+                            <span>
+                                 Country Population 
+                            </span>
+                            <span>
+                                ${ (+data.population/1000000).toFixed(1) Million people}
+                            </span>
+                          </p>   
+                          <p>
+                            <span>
+                                 Region 
+                            </span>
+                            <span>
+                                ${ data.region }
+                            </span>
+                          </p>   
+                      </div>`;
+         document.querySelector('.contentContainer').insertAdjacentHTML('beforeend',html);
+         document.querySelector('.contentContainer').style.opacity = '1';
+});
+}
+
+
+getCountryData('india');
+getCountryData('usa');
+getCountryData('uk'); 
+
+Remember: there might happen that the data of India gets fetched first and then uk and at last usa so things will be placed as per that only depends on which data arrives first. this shows us the non-blocking behavior of Javascript using AJAX calls.
+You can't say in which order, the data will appear.
+
+If you want to have a predefined order in which they should appear, then we have to make a chain the requests, which means to make a second request only when the first request is completed/finished. and this gives rise to "CALLBACK HELL"
 
 
 
