@@ -154,16 +154,93 @@ getCountryData('india');
 getCountryData('usa');
 getCountryData('uk'); 
 
-Remember: there might happen that the data of India gets fetched first and then uk and at last usa so things will be placed as per that only depends on which data arrives first. this shows us the non-blocking behavior of Javascript using AJAX calls.
+Remember: it might happen that the data of India gets fetched first and then uk and at last the USA so things will be placed as per that only depends on which data arrives first. this shows us the non-blocking behavior of Javascript using AJAX calls.
 You can't say in which order, the data will appear.
 
-If you want to have a predefined order in which they should appear, then we have to make a chain the requests, which means to make a second request only when the first request is completed/finished. and this gives rise to "CALLBACK HELL"
+If you want to have a predefined order in which they should appear, then we have to make a chain the requests, which means making a second request only when the first request is completed/finished. and this gives rise to "CALLBACK HELL"
 
 
 
 
 
+-----------------------------------------------------------------------------------
+How the Web Works Behind the Scenes
+-----------------------------------------------------------------------------------
+we have a client(browser) and a web server
+brief explanation: 
+client or the browser sends a request to a web server and the webserver then sends a response back to the browser. That Response can be the data or the web page that was requested. this is called request-response modal or client-server architecture.
 
+Deeper knowledge :
+let's take the example of the URL we used for getting countries' info
+https://restcountries.com/v3.1/name/india
+  Here, 
+i.  Protocol: 'https' is a protocol here, one more is HTTP & every URL gets an HTTP or HTTPS that will be used on this connection
+ii. Domain-name: 'restcountries.com' is the domain name
+iii. Resources: '/v3.1/name/India' is the resource that we want to access.
+
+This domain name is not the real address of the server that we're trying to access. It's really just a nice name given to us to easily memorize it. 
+This means that we need to convert this domain name into the real address of the server and that happens through a so-called DNS (Domain Name Server).
+DNS is a special kind of Server, So they are basically like the phone books of the internet.
+
+So the first step that happens when we access any Web Server is that the browser makes a request to a DNS and this special server will simply match the web address of the URL to the server's real IP address, all right. and this all happens through your Internet Service provider but the complete details don't matter here.
+So DNS converts the Domain into a real IP address and then sends the Real IP address to the browser, we can finally call it.
+https://restcountries.com/v3.1/name/   -------------------> https://104.27.142.889/443
+Domain --> IP address, where 104.27.142.889 is the IP address, and 443 is the PORT NUMBER, default is 443 for HTTPS
+
+The port number is just to identify a specific service that running on the server. (like a subaddress)
+Plus this port number has nothing to do with the 'v3.1/name/india' resource that we want to access.
+That info is sent over in the HTTP request
+
+So That actually wraps up the first step!!!!!!!
+
+So once we have the real IP address, a TCP/IP socket connection is established between the browser and the server and so they are now finally connected. this connection is kept alive for the entire time that it takes to transfer all the files of the website or all data.
+
+so TCP is Transmission Control Protocol & IP is Internet Protocol & Together they are communication protocols that define exactly how data travels across the Web. Or call them Internet Fundamental Control Systems, because they are the ones who set the rules about how data moves on the internet.
+
+Now, let's make our request!!
+and the request that we make is an HTTP request where HTTP is HyperText Transfer Protocol.
+So After TCP/IP, HTTP is another communication protocol that is simply a system of rules that allows two or more parties to communicate.
+In HTTP, it's just a protocol that allows clients and Web Servers to communicate and that works by sending request and response messages from client to server and back.
+
+The Request message looks like this :
+GET /v3.1/name/India HTTP/1.1
+Host: www.google.com
+User-Agent: Mozilla/5.0
+Accept-Language: en-US
+
+<BODY>
+
+
+The Starting line of the message is HTTP method + request target + HTTP version  
+The most important HTTP methods are :
+i. GET, for simply requesting data
+ii POST, for sending data
+iii. PUT & PATCH, for modifying data
+
+Request target is what we told the server we want to access, in this case, we told it to access the 'v3.1/name/India' resource.
+this was in our URL but now it was sent as a HTTP target request.
+
+after this, the next line of the request is the request headers, which are just some info that we send about the request itself.
+There are tons of standard different headers like what browser is used to make the request, at what time, the user's language, and many more.
+
+Now, finally, in case of sending data to the server, there will also be a request body and that body will contain the data that we're sending, for example, coming from an HTML Form, so that's the HTTP request.
+
+The main difference between HTTP and HTTPS is HTTPS is encrypted using TLS or SSL, which are still some protocols. but besides that, the logic behind HTTP requests and responses still applies to HTTPS.
+
+so our request is formed and now it hits the server, which will then be working on it until it has our data or Webpage ready to send back and once it's ready, it will send back using HTTP response.
+and HTTP response looks like this:
+HTTP/1.1 200 OK
+Date: Mon, 27 Nov 2023
+Content-Type: text/HTML
+Transfer-Encoding: chunked
+
+<BODY>
+
+the first line includes the HTTP version and the status code like 200 says the request was sent successfully and a 404 page is not found
+The body contains the JSON data
+
+TCP is to break the requests and responses down into thousands of small chunks called packets before they are sent. Once the small packets arrive at their final destination, TCP will reassemble all the packets into the original request or response and this is necessary so that each packet can take a different route through the internet because this way the message arrives at the destination as quickly as possible which could not be possible if we send all the packets using one same path as it would create a huge traffic.
+Now here comes the IP, and its job is to actually send and route these packets through the internet so it ensures that they arrive at the destination they should go using the IP address on each packet
 
 
 
