@@ -326,6 +326,28 @@ Let's Learn That in the next session...
 
 
 
+------------------------------------------------------------------------------------------
+PROMISES
+------------------------------------------------------------------------------------------
+The promise is a Javascript Object that is a placeholder for storing the future result of an asynchronous operation. 
+
+Here we don't go with the Old-school way of AJAX calls i.e XMLHttpRequest()
+we use fetch('url') that returns us a promise immediately.
+
+const request = fetch('https://restcountries.com/v3.1/name/bharat');
+console.log(request); -----> Promise{pending}
+
+PROMISE LIFECYCLE : 
+whenever we create a promise, that promise goes inside the "pending" state which means the asynchronous work is not yet done.
+once the work is done we are in the "fulfilled" Phase, which still has two categories : 
+i. Rejected: there is some error while performing the request.
+ii. Solved: the asynchronous work has been done without any problem as we have expected.
+
+Main Benefit :
+i. we don't have to rely on events and callback to handle asynchronous results.
+ii. Plus to make our asynchronous operations goes in a sequence, we don't have to make nested callbacks so we are safe from callback hells.
+
+
 
 
 
