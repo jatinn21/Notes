@@ -329,7 +329,7 @@ Let's Learn That in the next session...
 ------------------------------------------------------------------------------------------
 PROMISES
 ------------------------------------------------------------------------------------------
-The promise is a Javascript Object that is a placeholder for storing the future result of an asynchronous operation. 
+The promise is a Javascript Object that is a placeholder for storing the future result(future responses coming from AJAX calls) of an asynchronous operation. 
 
 Here we don't go with the Old-school way of AJAX calls i.e XMLHttpRequest()
 we use fetch('url') that returns us a promise immediately.
@@ -341,22 +341,136 @@ PROMISE LIFECYCLE :
 whenever we create a promise, that promise goes inside the "pending" state which means the asynchronous work is not yet done.
 once the work is done we are in the "fulfilled" Phase, which still has two categories : 
 i. Rejected: there is some error while performing the request.
-ii. Solved: the asynchronous work has been done without any problem as we have expected.
+ii. Solved: the asynchronous work has been done without any problem as we have expected. example : 
+while making an AJAX call to get the data using API, the user went offline and is not connected to API server.   
+
+Promise only settled once, and when it is settled then the state can't be changed forever.
 
 Main Benefit :
-i. we don't have to rely on events and callback to handle asynchronous results.
-ii. Plus to make our asynchronous operations goes in a sequence, we don't have to make nested callbacks so we are safe from callback hells.
+i. We don't have to rely on events and callbacks to handle asynchronous results.
+ii. Plus to make our asynchronous operations go in a sequence, we don't have to make nested callbacks so we are safe from callback hells.
+
+Consume Promise :
+when we already have a promise. EG. promise returned from fetch API
+
+Build Promise :
+fetch API returns the promise, so we don't have to build promise by ourselves.
+
+
+Example : 
+// FETCH API
+const country = function (countryName) {
+  fetch(`https://restcountries.com/v3.1/name/${countryName}`)
+    .then(function (response) {
+      return response.json();   
+    })
+    .then(function (data) {
+      console.log(data);  ---> [Portugal data]
+    });
+};
+
+country('portugal');
+NOTE : 
+we have used response.json because when we get something from the response from the fetch, we are more into the data that comes in a readable stream which we can't see. So to see that data we use json method which is available on all responses of the fetch method, so to see the data we used response.json().
+The problem is that this json method is itself an asynchronous function. so that means it will also return a new promise. This is all confusing but that's how it works!!
+So we have to return the json method can handle it in returned promsie using "then"
+
+
+SUMMARY : 
+fetch will return a promise --> handle using then() --> using a function inside that then method and that function will take a response ---> that response will be in readable stream which can't be read from the body ---> to make it read we will use json method, which is a asynchronous function and so it will return a new promise so do return response.json() so that you can handle this in new promise ----> new then() which will take a new function and that function will take an parameter say data and that data is what we want, the country info so now you can render the country in your html.  
+
+Simple code using arrow function :
+const country = function (countryName) {
+  fetch(`https://restcountries.com/v3.1/name/${countryName}`)
+    .then(response => response.json())
+    .then(data => console.log(data))
+};
+
+Note: we are still using callbacks, so we get rid of callback hells but not from callbacks functions.
+
+To make multiple request or asynchronous operations in a sequence we can use Promises:
+const country = function (countryName) {
+  fetch(`https://restcountries.com/v3.1/name/${countryName}`)
+    .then(response => response.json())
+    .then(data => {
+            renderCountry(data);
+            const neighbour = data.borders?.[0];
+
+            if(!neighbour) return;
+            return fetch( `https://restcountries.com/v3.1/alpha/${neighbour}`);    ----> twist point
+    })
+    .then(response2 => response2.json() )
+    .then(data2 => renderCountry(data2,'neighbour'));
+};
+
+REMEMBER :
+on twist point, fetch will again give us a new promise so we can start doing the same process of doing chaining there inside that block, like a normal guy thinks, but this will again bring callback hell into our code, So don't be try to be damn smart. Work on One task, take the work in then chain() 
 
 
 
+Note : 
+then( response => {
+    return 23;
+     })
+.then( data => console.log(data));  ----------> data = 23
+
+
+------------------------------------------------------------
+To handle Error: like cannot connect to API Server
+------------------------------------------------------------
+then() handles all the fulfilled promises and catch() handles all the error no matter what's the error
+
+
+//Most recommended when you don't know where the error happens in which promise!!
+TYPE1 using catch() , CODE EXAMPLE :
+const country = function (countryName) {
+  fetch(`https://restcountries.com/v3.1/name/${countryName}`)
+    .then(response => response.json())
+    .then(data => {
+            renderCountry(data);
+            const neighbour = data.borders?.[0];
+
+            if(!neighbour) return;
+            return fetch( `https://restcountries.com/v3.1/alpha/${neighbour}`);
+    })
+    .then(response2 => response2.json() )
+    .then(data2 => renderCountry(data2,'neighbour'))
+    .catch(error => alert(error))   /////////////////////////////////////////////////   <--------------------Check on this line
+    .catch(error => renderError('Error Occurred'))   /////////////////////////////////////////////////   <--------------------Or render the error on the screen in a text form
+
+};
 
 
 
+we can also handle the error in then method, it takes two argument function, first is the fulfilled of course, and second one is optional i.e  error handling, separated by ','
+
+
+TYPE2 using then() , when you know where the error occurs , CODE EXAMPLE :
+fetch(`https://restcountries.com/v3.1/name/${countryName}`)
+.then(response=> response.json()
+        ,
+       error => console.log(error))
 
 
 
+and At last we have "finally", catch only works when we have got some error, then only works when we have some fulfilled response, finally is called everytime no matter there is an error or not, it is not usefull always as it is called everytime and we use this at the end of the chaining
 
 
 
+Finally CODE EXAMPLE :
+  fetch(`https://restcountries.com/v3.1/name/${countryName}`)
+    .then(response => response.json())
+    .then(data => {
+            renderCountry(data);
+            const neighbour = data.borders?.[0];
 
+            if(!neighbour) return;
+            return fetch( `https://restcountries.com/v3.1/alpha/${neighbour}`);
+    })
+    .then(response2 => response2.json() )
+    .then(data2 => renderCountry(data2,'neighbour'))
+    .catch(error => alert(error))
+    .finally(()=>{
+        console.log('this block will always be executed');
+    })
 
