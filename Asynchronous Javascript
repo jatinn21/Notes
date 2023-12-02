@@ -474,3 +474,89 @@ Finally CODE EXAMPLE :
         console.log('this block will always be executed');
     })
 
+
+
+---------------------------------------------
+CODING Challenge - 256, Nice work so please check it out
+---------------------------------------------
+
+
+Remember: when we use fetch(), we know that we get a promise from the fetch function and then that goes into WebAPIs and waits there until we get any response. Once we get any response, that response message doesn't go directly inside the callback queue to get executed, but it goes inside a new queue that is the "microtask queue", which is the same as the callback queue but the only difference is that It has more priority than callback queue. 
+So once the response data arrives, it doesn't wait or have any effect from the callback queue, so it directly goes inside the call stack to get executed. 
+
+> JavaScript Runtime in the browser: Container which includes all the pieces necessary to execute Javascript code    
+
+--> JavaScript Engine: Heart of JavaScript
+----> Heap: Where objects are stored in memory
+----> Callstack: Where code is executed, Javascript has only one thread of execution. No multitasking. Other language like Java have multi-thread
+
+--> Web APIs: APIs provided to the engine, like DOM, Timers, Fetch API, geolocation API, etc. but they are not part of the Javascript
+
+--> Callback queue: Ready-to-be-executed-callback functions (coming from events) 
+When callstack is empty, the "event loop" takes callbacks from the callback queue and puts them into callstack so that they can be executed.
+So the event loop is the essential piece that makes asynchronous behavior possible in Javascript. The reason why we can have a non-blocking concurrency model in Javascript.
+Concurrency model: how a language handles multiple things happening at the same time.
+
+
+Code Example : 
+element = document.querySelector('image');
+element.src = 'dog.src';
+element.addEventListener('load',()=>{
+   element.classList.add('fadeIn')
+})
+fetch('https://someurl.com./api')
+.then(response=>console.log(response));
+
+
+BTS :
+first 502 line will goes inside the callstack, and after it gets selected we will go to line 503, that is changing the source attribute of the selected element. 
+This will start loading the image asynchronously in the background. But this time, we will see in detail.
+So all the asynchronous tasks are handled in "Web APIs" environment of the browser, now if the image will be loading in the synchronous way then it will block the execution of all the other code which will be very terrible. That's why loading images in Javascript is asynchronous, So it doesn't happen in callstack or not in the main thread of execution but really in the web APis environment.
+So then we will see the next line that's 504, which is a load event of the image element and pass a callback function as always
+that is, this code will : 
+()=>{
+   element.classList.add('fadeIn')
+}
+
+will goes inside the web APIs environment and the callback function will stay there until the load event is emitted. So we are handling the asynchronous behavior.
+
+
+
+So in the next line 507: we make a AJAX call using fetch API and asynchronous fetch operation will happen in the WebAPI environment otherwise it will block other and create a huge log in the application. Finally we use the then() method on the promise returning the fetch function and this will also register a callback in the Web APIs.
+So in short the fetching will start happening in the webapis and this will return a promise which will also be registered in the webapi. this will have a callback function also comes in webapi
+
+so now we have executed all the top level code, all the code that is not inside any callback function in a synchronous way. We have some image loading in the background, and some data be fetched from an API. 
+
+-----------------------------Things get interested : 
+Let's say the image  has finished loading and therefore the load event is emitted on that image, So what happen is the callback of load event will goes from webAPI to callback queue by event loop and in callback queue, things get executed in an order-or a line First in first out.
+
+so event loop will see whether the callstack is empty or not, if it is empty then it will take the task from the callback queue and will put into the callstack. so our load event which comes into the callback queue will now goes into callstack. and will be ready to get executed. this is called event loop tick. when event are executed in this way.
+
+Great, now only fetching is left in the web apis, getting data from the AJAX call in the background. this is happening with the promise.
+Promise works slightly in different way. 
+So let say data is finally arrived and the fetch is done. 
+Now callbacks related to promises like this one (res)=> console.log(res); 
+callback related to promises like this one that we registered with the promises then method. do not go into callback queue. So the callback that we have of res=>cl(res) which is coming from the promise will not move into the callback queue. Instead callback of promises have a special queue called "MICROTASK QUEUE", this queue have more priority then callback queue. so this queue will get executed before and then callback queue gets the execution. first all the tasks callbacks inside the microtask queue get executed, we will then goes inside the callback queue. So our callback of res=>cl(res) will goes inside this microtask queue.
+
+Event loop will take this microtask and put it inside the callstack. It doesn't matter whether the callback queue is empty or not.
+So this means microtask can cut in line before all the regular callbacks
+So this will print the response in our console and we are done with the code.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
