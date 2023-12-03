@@ -543,6 +543,203 @@ So this means microtask can cut in line before all the regular callbacks
 So this will print the response in our console and we are done with the code.
 
 
+----------------------------
+CODE EXAMPLE
+----------------------------
+
+console.log('Test Begins');
+setTimeout(function(){
+    console.log('0-second Timer');
+},0)
+Promise.resolve('Promise Resolved 1!').then(res => console.log(res));
+console.log('The End');
+
+O/P : 
+Test Begins
+The End
+Promise Resolved 1!
+0-second Timer
+
+--------------------
+TO PROVE
+--------------------
+console.log('Test Begins');
+setTimeout(function(){
+    console.log('0-second Timer');
+},0)
+Promise.resolve('Promise Resolved 1!').then(res => console.log(res));
+Promise.resolve('Promise Resolved 2!').then(res => {
+      for(let i = 0;i<100000000; i++){}
+      return console.log(res);
+});
+console.log('The End');
+
+
+
+
+
+
+
+
+------------------------------------------------------------
+BUILD a SIMPLE PROMISE
+------------------------------------------------------------
+
+we can create our own promises, which can be fulfilled or rejected :
+
+Fulfilled promise: we won the lottery : )
+rejected promise: we lose : (
+
+Here, the promise constructor will take only one argument which is a function and it's called as executor function. Whenever this promise is run, this executor function is run!
+This executor function takes two arguments: resolve, and reject function.
+Let's say there is a 50% chance to win & lose.
+resolve function can be handled by then()
+reject function can be handled by catch()
+
+Example, Create a Promise :
+const lotteryTicket = new Promise( function(resolve,reject){
+    if(Math.random() >= 0.5){
+        resolve('You Win the lottery');
+    }else{
+        reject(new Error('You lose the lottery'));
+    }
+})
+
+
+(OR)
+Make some asynchronous behavior with the promise
+const lotteryTicket = new Promise( function(resolve,reject){
+    console.log('lottery result appearing');
+    setTimeout(function(){
+        if(Math.random() >= 0.5){
+            resolve('You Win the lottery');
+        }else{
+            reject(new Error('You lose the lottery'));
+        }
+    },2000); 
+})
+
+
+
+Example, Consume that Promise:
+lotteryTicket
+    .then(res => console.log(res))
+    .catch(err => console.error(err))
+
+
+
+Promisifying setTimeout:
+const wait = function(seconds){
+ return new Promise(function(resolve){                // Only resolve bcz we know that we will are gonna act as API server and send some data so no rejection is there 
+    setTimeout(resolve,second*1000);                 // Just call the resolve function and to make the seconds, multiply by 1000 
+ })
+}
+
+
+getting rid of callback hells using our own promsie
+wait(1)   ---------> this will return the promise 
+        .then(res => {
+              console.log('I waited for 1 second');
+               return wait(1); 
+        })
+        .then(res => {
+                      console.log('I waited for 2 second');
+                      return wait(1);
+        })
+        .then(res => {
+                      console.log('I waited for 3 second');
+                      return wait(1);
+        })
+        .then(res => {
+                      console.log('I waited for 4 second');
+        })
+
+O/P : 
+I waited for 1 second
+I waited for 2 second
+I waited for 3 second
+I waited for 4 second
+
+
+(OR)
+Callback Hell using setTimeout
+
+setTimeout(function(){
+    console.log('I waited for 1 second');
+        setTimeout(function(){
+            console.log('I waited for 2 second');
+                setTimeout(function(){
+                    console.log('I waited for 3 second');
+                        setTimeout(function(){
+                            console.log('I waited for 4 second');
+                        },1000)
+                },1000)
+        },1000)
+},1000)
+
+
+
+
+Immediate solving the promise(fulfilling): resolve is a static method
+Code:
+Promise.resolve('abc').then(res => console.log(res));
+Output: 
+'abc'
+
+Immediate rejecting the promise(rejected): reject is a static method 
+Code1 :
+Promise.reject('Something went wrong🤧').catch(err => console.error(err));
+Output: 
+Something went wrong🤧 : in red color
+
+Code2:
+Promise.reject(new Error('Problem Found 🤧')).catch(err => console.error(err));
+Output: 
+Problem Found 🤧 : in red color
+
+
+
+
+
+------------------------------------------------------------------------
+Promisifying and geolocation API
+------------------------------------------------------------------------
+We have also used the geolocation API before also.
+To get the user geolocation, we use this API. Don't remember?
+Here is how :
+we use navigator and that has geolocation and inside that there is a method called 'getCurrentPosition', which takes two argument, 1st : position function if everything goes right this function is executed. 2nd : error function if something went wrong this function is executed!!
+
+Code :
+navigator.geolocation.getCurrentPosition(
+  position => console.log(position);
+    ,
+  error  => console.error(error);  
+)
+
+Output : 
+We get a pop up notification where Javascript is asking for the permission to use your computer's GPS, after allowing, it take couple of second as it also works in background and don't block other code and happens in web api environment and return a object having all the details of your location like your coordinates(lat,long)
+
+
+Now convert this API function into promise(promisifying this API function) :
+CODE:
+const getPosition = function(){
+    return new Promise( function(resolve,reject){
+          navigator.geolocation.getCurrentPosition(
+            Position => resolve(Position),
+            Reject => reject(Reject)
+          )
+    });
+
+    // (OR)
+    return new Promise(function(resolve,reject){
+        navigator.geolocation.getCurrentPosition(resolve,reject);
+    })
+}
+
+
+getPosition().then(res => console.log(res) ); 
+O/P :
+The object contains the location of your device.
 
 
 
@@ -552,11 +749,7 @@ So this will print the response in our console and we are done with the code.
 
 
 
-
-
-
-
-
-
-
+------------------------------------------------
+261 coding challenging is fun, Please check  that too
+------------------------------------------------
 
