@@ -753,3 +753,179 @@ The object contains the location of your device.
 261 coding challenging is fun, Please check  that too
 ------------------------------------------------
 
+
+
+
+-------------------------------------------------------------------------------
+Consuming Promises using Async and await
+-------------------------------------------------------------------------------
+ES2017, we have an even better and easier way to consume promises i.e async and await
+
+To make any function async just write 'async' prior to that function and then it will become an asynchronous function which means the function will basically  keep running in the background while performing the code that is inside of it, then when the function is done, it automatically returns a promise.
+REMEMBER: inside an async function we can have one or more await statements.
+currently using await with a promise that will be returned from a fetch function
+
+Not complete CODE, just for a glimpse : 
+const whereAmI = async function(){
+    await fetch('blahblah.com/api')
+}
+
+so await will be used with a promise coming from a fetch function, using our country API.
+In an async function, We know that fetch with return a promise, and that is handled by await, which we use to await for the result of this promise. 
+So await will stop the execution at this point of the function until the promise is fulfilled Until the data has been fetched.
+
+A question arises at this point: YOu might think that that will block/stop the code execution so how we can say it as asynchronous?
+Answer: No, it won't block the execution, because stopping execution in an async function is not a problem because this function is running asynchronously in the background and therefore it's not blocking the main thread of execution or you can say blocking the callstack. that's special about async await.
+It makes our code look like a regular synchronous code while in the background everything is asynchronous.
+
+So let's move further.
+once the data is fetched, this "await fetch('blahblah.com/api')" will return us a fulfilled value of the promise. So we can simply store that in a variable and take a look of that variable. For proof that this is an asynchronous function, let's log something to the console.log after we call the function. 
+
+const whereAmI = async function(country){
+    const response = await fetch(`https://restcountries.com/v03.1/name/${country}`);
+    console.log(response);
+}
+whereAmI('portugal');
+console.log('FIRST');
+
+QUESTION: if we get the console.log message before country data, that means our function is running in the background and it's an asynchronous function. Otherwise, it's a regular synchronous.
+OUTPUT : Yes, it's an asynchronous function. because when the function is executed it will load off in the background and will be running there(not in the main thread) without blocking our main thread and console.log will be executed(in the main thread) and printed.
+
+SO SIMPLE CODE, SO BEAUTIFUL CODE, JUST LOOKING LIKE A WOW!!!
+
+
+in Async await (sugar-coating the promise syntax): 
+const whereAmI = async function(country){
+    const response = await fetch(`https://restcountries.com/v03.1/name/${country}`);
+    console.log(response);
+}
+
+in promises :
+const whereAmI = function(country){
+    fetch(`https://restcountries.com/v03.1/name/${country}`)
+    .then(response => console.log(response))
+}    
+
+instead of messing with so many callbacks, our async function looks very simple and cute.
+So now let's make this work as we have to make the response in JSON and so many other things like render the country.
+
+const whereAmi = async function(country){
+  const response = await fetch(`https://restcountries.com/v03.1/name/${country}`);
+  const data = await response.json();    //this will return a new promise   ---> NOtE POINT
+  console.log(data);
+  renderCountry(data);
+}
+
+in note point, response.json() will return a new promise so we were handling that using a then() method, a new callback function...
+But here we will just use the await keyword and store the data in our variable.
+EASY PEASY.
+
+Let's add more things like geolocation and reverse geo-location(show the coordinates and get the country data)
+
+// geolocation API in promise, Just to get the coord for your device, so no arguments are taken as that will done by js geolocation api itself and return an object.
+const getGeoCoordinates = function(){
+    return new Promise(function(resolve,reject){
+        navigator.geolocation.getCurrentPosition(resolve,reject);
+                //OR
+        navigator.geolocation.getCurrentPosition(
+           position => resolve(position),
+           err => reject(err) 
+        )
+    })
+}
+
+
+Use this in our async code :
+const whereAmi = async function(){
+  // get the location  
+  const pos = await getGeoCoordinates();  
+  const {latitude: lat, longitude: lng} = pos.coords;
+
+  //get country data using reverse geolocation api from your coords that we already stored in lat and long
+  const responseGeo = await fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`);  
+  const countryData = await responseGeo.json();  // to wait for the promise that will be returned from the .json() methods
+
+  // Country data from Coords 
+  console.log(countryData);  // return an object has many things but the main thing is country: "Portugal", so we have the name of the country.
+
+  // Render the country with the countryData.country
+  renderCountry(countryData.country); // so we eliminate the country paramter from this async function.
+}
+
+//instead of doing this
+whereAmI('Bharat');  --> country will render
+
+// We can avoid country name as JS will take your coords from geolocation API, and then we use the coords and using reverse-geolocation we can get the country data.
+whereAmI();  --> country will render
+
+
+NOTE: As of yet we haven't handled the error in async 
+
+
+
+
+
+--------------------------------------------------------------------
+Error Handling in Async Await    
+--------------------------------------------------------------------
+in Async Await, we can't attach the catch method that we used before, because we can't attach it anywhere in here.
+so we have to try and catch the statement.
+
+Wrap everything in a try block so basically JS will try to execute this code
+let's say, we have two variables 'x' and 'y'.
+'x' is built using let, and 'y' is built using const.
+
+instead of reassigning the value to 'x', we try to use the variable 'y' which is a const variable.
+
+CODE:
+let x = 10;
+const y = 7.14;
+y = 7.1428;     ----------> This will throw an error of can't reassign a const variable 'Y'. can see that error in console; 
+
+
+But in try, catch Block :
+try{
+    let x = 10;
+    const y = 7.14;
+    y = 7.1428;  
+}catch(err){
+    alert(err.message)   ---> alert will come that is very concise ('Assignment to constant variable.')
+}
+
+//so no error will be displayed in console.
+
+so all your whereAmI content will go inside the try block and errors will be handled in the catch block.
+NOTE: if the 'ABC' request is working fine and your code is giving you some data, but if you make the same request multiple times, your request might get collapsed and gives you an 404 Error 
+
+
+
+final code :
+const whereAmi = async function(){
+    try{
+      // get the location  
+      const pos = await getGeoCoordinates();  
+      const {latitude: lat, longitude: lng} = pos.coords;
+    
+      //get country data using reverse geolocation api from your coords that we already stored in lat and long
+      const responseGeo = await fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`);  
+
+      //if our request is collapsed or for any reason we don't get the data, we can handle it by knowing the response data 'ok' attribute, if ok value is true, then we got the data else we didn't get the data and something went wrong.
+
+      if(!responseGeo.ok){
+            throw new Error(`Something went Wrong, We didn't get the country data`)
+      }  
+      
+
+      const countryData = await responseGeo.json();  // to wait for the promise that will be returned from the .json() methods
+    
+      // Country data from Coords 
+      console.log(countryData);  // return an object has many things but the main thing is country: "Portugal", so we have the name of the country.
+    
+      // Render the country with the countryData.country
+      renderCountry(countryData.country); // so we eliminate the country paramter from this async function.
+    }catch(err){
+        renderError(err.message);
+    }
+}
+
+
