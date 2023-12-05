@@ -929,3 +929,313 @@ const whereAmi = async function(){
 }
 
 
+
+
+
+
+
+
+-----------------------------------------------------------------------
+Returning Values from async-await functions
+-----------------------------------------------------------------------
+
+//let's take the geolocation from API, this will return us a promise about the data if everything goes well, else it will give us an error:
+const getGeoCoordinates = function(){
+    return new Promise(function(resolve,reject){
+        navigator.geolocation.getCurrentPosition(
+            pos => resolve(pos),
+            err => reject(pos)
+        )
+    })
+}
+
+const whereAmI = async function(){
+
+    try{    
+        //take the data for the location geocoord from API
+            const pos = await getGeoCoordinates();
+            const {latitude: lat , longitude: lng} = pos.coords;
+        
+        // make the request
+            const respGeo = await fetch('https://geocode.xyz/${lat},${lng}?geoit=json'); 
+        
+        // throw the error if something goes wrong
+            if(!respGeo.ok) throw new Error('Something went wrong!');
+        
+        // store the required data in a variable in JSON format; we only have a few details like which country you are in and city. not about its population, currency etc
+            const dataGeo = await respGo.json();
+        
+        // make a new request to take the country data
+            const responseCountry = await fetch(`https://restcountries.com/v3.01/name/${dataGeo.country}`);
+        
+        // throw the error if something goes wrong
+            if(!responseCountry.ok) throw new Error('There is some error in getting country's data !');
+        
+        //store the data and convert it into json
+            const countryData = responseCountry.json();
+        
+        //render the country 
+            renderCountry(countryData);
+
+        //Success, No Problem in Async Function, then return this
+        // return some data from this async function to learn this topic, assume it will return like which city and country you are in.
+            return `you are in ${dataGeo.city}, ${dataGeo.country}`;         
+        
+    }
+    catch(err){
+        console.error(`${err}, Solve it ⭐`);
+        renderError(`${error.message} ⭐⭐⭐`);
+    }
+
+}
+
+--------------------
+console.log('1: Will get location');                     --> 1
+whereAmI();                                              --> 3
+console.log('3: Finished getting location');             --> 2
+-------------------
+
+
+//we know that our async function will return a promise that will be a string "you are in Surat, India".
+//For regular function :
+const city = whereAmI();
+console.log(city); 
+//OUTPUT As this is not a regular function, it's an asynchronous function that will return the promise:
+promsie{<pending>}
+
+//know we know that how we can handle promise:
+whereAmI().then(city => console.log(city));  ---> "you are in Surat, India"
+
+
+//So we know how to handle fulfilled promise here that will be returned from async function.
+Let's work with rejection, like a wrong country name
+
+const whereAmI = async function(){
+
+    try{    
+        //take the data for the location geocoord from API
+            const pos = await getGeoCoordinates();
+            const {latitude: lat , longitude: lng} = pos.coords;
+        
+        // make the request
+            const respGeo = await fetch('https://geocode.xyz/${lat},${lng}?geoit=json'); 
+        
+        // throw the error if something goes wrong
+            if(!respGeo.ok) throw new Error('Something went wrong!');
+        
+        // store the required data in a variable in JSON format; we only have a few details like which country you are in and city. not about its population, currency etc
+            const dataGeo = await respGo.json();
+        
+        // make a new request to take the country data
+            const responseCountry = await fetch(`https://restcountries.com/v3.01/name/INDIASTAN`);    -------------------Changes POINT, INDIASTAN is not a country
+        
+        // throw the error if something goes wrong
+            if(!responseCountry.ok) throw new Error('There is some error in getting country's data !');
+        
+        //store the data and convert it into json
+            const countryData = responseCountry.json();
+        
+        //render the country 
+            renderCountry(countryData);
+
+        //Success, No Problem in Async Function, then return this
+        // return some data from this async function to learn this topic, assume it will return like which city and country you are in.
+            return `you are in ${dataGeo.city}, ${dataGeo.country}`;         
+
+        
+    }
+    catch(err){
+        console.error(`${err}, Solve it ⭐`);
+        renderError(`${error.message} ⭐⭐⭐`);
+
+        // Problem like no country found 'INDIASTAN' in Async Function, then rethrow the error
+        throw new Error('Country not found');
+        (OR)
+        throw err;
+    }
+
+}
+
+ 
+console.log('1: Will get the location');                        ---------------------------> 1
+whereAmI()
+.then(city => console.log(`2: ${city}`)) ---> "you are in Surat, India"        -------------> 3
+.catch(err => console.log(`2: ${err.message}`))  --> "Country not found"       -------------> 3 
+console.log('3: Finished getting location');                                    ------------> 2
+
+
+
+
+//As INDIASTAN is not a country we will get some error but still, we get 'undefined' from the method on the 1055 line and not handled by catch block on the 1056 line as WhereAmI still return something that is not considered as an error :(
+that means the promise is still fulfilled and not rejected by this 'INDIASTAN' country.
+Even if there is an error in the async function, it still returns a fulfilled value.
+To handle this, we have to rethrow the error, which means throw the error again so that we can then propagate it down.
+
+
+
+//To make the order like 1,2,3, we can use of finally, that is executed at the last
+---------
+CODE : 
+---------
+console.log('1: Will get the location');                                        ---------------------------> 1
+whereAmI()
+.then(city => console.log(`2: ${city}`)) ---> "you are in Surat, India"                        -------------> 2
+.catch(err => console.log(`2: ${err.message}`))  --> "Country not found"                       -------------> 2 
+.finally(() => console.log('3: Finished getting location'));                                    ------------> 3
+
+
+
+// Now if you want to convert the Above code into async await we can use IIFE, await only works inside async
+IIFE: Immediately-invoked function expression
+Syntax :
+(function(){
+
+})()
+
+
+CODE: 
+console.log('1: Will get the location'); 
+(async function(){
+    try{
+        const city = await whereAmI();
+        console.log(`2: ${city}`);
+    }
+    catch(err){
+        console.log(`2: ${err.message}`);
+    }
+    console.log('3: Finished getting location');
+})()
+
+
+OUTPUT :
+1: Will get the location
+2: you are in Surat, India
+3: Finished getting location 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
